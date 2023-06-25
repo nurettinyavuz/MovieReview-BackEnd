@@ -9,7 +9,7 @@ const userRoute = require('./routes/userRoute');
 
 const app = express();
 
-mongoose.connect('mongodb+srv://Nurettin:MBsYZVOC7NGE6uBo@cluster0.tknxigp.mongodb.net/?authSource=Cluster0&authMechanism=SCRAM-SHA-1', {
+mongoose.connect('mongodb://0.0.0.0:27017/etkinlikbul-db', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(()=>{
