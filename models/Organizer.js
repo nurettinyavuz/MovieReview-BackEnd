@@ -2,21 +2,23 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const UserSchema = new Schema({
-    name:{
-        type:String,
-        required:true,
-    },
-    surname:{
-        type:String,
-        required:true,
-    },
-    telephone:{
+const OrganizerSchema = new Schema({
+    email:{
         type:String,
         required:true,
         unique:true,
     },
-    email:{
+    taxNumber:{
+        type:String,
+        required:true,
+        unique:true,
+    },
+    companyName:{
+        type:String,
+        required:true,
+        unique:true,
+    },
+    telephone:{
         type:String,
         required:true,
         unique:true,
@@ -27,5 +29,5 @@ const UserSchema = new Schema({
     }
 });
 
-const User = mongoose.model('User',UserSchema);
-module.exports=User;
+const Organizer = mongoose.model('Organizer',OrganizerSchema);
+module.exports = Organizer;
