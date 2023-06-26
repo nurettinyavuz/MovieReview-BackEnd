@@ -3,13 +3,15 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const dotenv = require('dotenv');
+
 
 const pageRoute = require('./routes/pageRoute');
 const userRoute = require('./routes/userRoute');
 
 const app = express();
 
-mongoose.connect('mongodb://0.0.0.0:27017/etkinlikbul-db', {
+mongoose.connect('mongodb+srv://nurettin:lpE9qB4QoC62QrVS@cluster0.pzt3kqv.mongodb.net/?authSource=Cluster0&authMechanism=DEFAULT', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 }).then(()=>{
@@ -27,7 +29,7 @@ app.use(session({
   secret: 'my_keyboard_cat',
   resave: false,
   saveUninitialized: true,
-  store: MongoStore.create({ mongoUrl: 'mongodb://127.0.0.1:27017/etkinlikbul-db' })//connect-mongo paketinin middleware'ı bu satır
+  store: MongoStore.create({ mongoUrl: 'mongodb+srv://nurettin:lpE9qB4QoC62QrVS@cluster0.pzt3kqv.mongodb.net/?authSource=Cluster0&authMechanism=DEFAULT' })//connect-mongo paketinin middleware'ı bu satır
   //Bu Middleware yazıldığında otomatik olarak session adında koleksiyon oluşturulur( ne işe yaradığını en alta yazdım)
 
 }));
