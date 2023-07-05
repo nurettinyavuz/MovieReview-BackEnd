@@ -1,11 +1,12 @@
 exports.getIndexPage = (req, res) => {
-    res.status(200).render('index', {
-      page_name: 'index',
-    });
-  };
+  console.log(req.session.userID); //hangi kullanıcı giriş yaptıysa konsola o kullanıcının id'sini yazdırıyorum (req.session.userID hangi kullanıcı o an aktifse onun id'sini tutuyor)
+  res.status(200).render('index');
+};
 
 exports.getRegisterPage = (req, res) => {
-    res.status(200).render('register', {
-      page_name: 'register',
-    });
-  };
+  res.status(200).render('register');
+};
+
+exports.getLoginPage = (req, res) => {
+  res.status(200).render('login');
+};

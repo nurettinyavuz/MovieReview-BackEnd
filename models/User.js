@@ -24,7 +24,12 @@ const UserSchema = new Schema({
     password: {
       type: String,
       required:true,
-    }
+    },
+    role:{
+        type:String,
+        enum:["user","organization","admin"],
+        default:"user",//otomatik user olarak giriş yapıyor
+      },
 });
 
 const User = mongoose.model('User',UserSchema);

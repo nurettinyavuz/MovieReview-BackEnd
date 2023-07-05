@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Organizer = require('../models/Organizer');
+const Organization = require('../models/Organization');
 
 exports.createUser = async (req, res) => {
   try {
@@ -43,10 +44,20 @@ exports.createOrganizer = async (req, res) => {
   try {
     const organizer = await Organizer.create(req.body);
     //try-catch yapmamızın nedeni hatayı yakalamak içi
-    res.status(201).json({
-      status: 'success',
-      organizer,
+    res.status(201).redirect('/');
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error,
     });
+  }
+};
+
+exports.createOrganization = async (req, res) => {
+  try {
+    const organization = await Organization.create(req.body);
+    //try-catch yapmamızın nedeni hatayı yakalamak içi
+    res.status(201).redirect('/');
   } catch (error) {
     res.status(400).json({
       status: 'fail',

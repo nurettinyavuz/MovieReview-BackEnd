@@ -11,12 +11,22 @@ const userRoute = require('./routes/userRoute');
 
 const app = express();
 
-mongoose.connect('mongodb+srv://nurettin:lpE9qB4QoC62QrVS@cluster0.pzt3kqv.mongodb.net/?authSource=Cluster0&authMechanism=DEFAULT', {
+require('dotenv').config(); // dotenv modülünü yüklüyoruz
+
+// .env dosyasındaki MONGO_URL değerini alıyoruz
+const mongoURL = process.env.MONGO_URL;
+
+mongoose.connect(mongoURL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-}).then(()=>{
-console.log("DB Connected Succesfully")
+}).then(() => {
+  console.log("DB Connected Successfully");
+}).catch((error) => {
+  console.log("DB Connection Error: ", error) ;
 });
+
+// Express uygulamanızın geri kalanını burada devam ettirin...
+
 
 //Global Variable
 global.userIN = null;//Başlangıç değeri olarak null dedim yani 0 olarak tanımladım (İf koşulunda false olarak gözükür)
@@ -29,7 +39,7 @@ app.use(session({
   secret: 'my_keyboard_cat',
   resave: false,
   saveUninitialized: true,
-  store: MongoStore.create({ mongoUrl: 'mongodb+srv://nurettin:lpE9qB4QoC62QrVS@cluster0.pzt3kqv.mongodb.net/?authSource=Cluster0&authMechanism=DEFAULT' })//connect-mongo paketinin middleware'ı bu satır
+  store: MongoStore.create({ mongoUrl: mongoURL })//connect-mongo paketinin middleware'ı bu satır
   //Bu Middleware yazıldığında otomatik olarak session adında koleksiyon oluşturulur( ne işe yaradığını en alta yazdım)
 
 }));

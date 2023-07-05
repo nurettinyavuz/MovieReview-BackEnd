@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const OrganizerSchema = new Schema({
-  email: {
+  companyName: {
     type: String,
     required: true,
     unique: true,
@@ -13,12 +13,12 @@ const OrganizerSchema = new Schema({
     required: true,
     unique: true,
   },
-  companyName: {
+  telephone: {
     type: String,
     required: true,
     unique: true,
   },
-  telephone: {
+  email: {
     type: String,
     required: true,
     unique: true,
