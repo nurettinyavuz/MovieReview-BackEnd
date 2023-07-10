@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const Organizer = require('../models/Organizer');
 const Organization = require('../models/Organization');
@@ -28,8 +29,8 @@ exports.loginUser = async (req, res) => {
     if (!user) {
       res.status(400).send('BÖYLE BİR KULLANICI BULUNAMADI');
     }
-   // const same = await compare(password, user.password);
-    if (user) {
+    const same = await bcrypt.compare(password, user.password); //kullanıcının girdiği şifrenin, veritabanındaki kullanıcının şifresiyle eşleşip eşleşmediğini kontrol eder,Karşılaştırma sonucu same değişkenine atanır.
+    if (same) {//eğer şifreler eşleşirse çalışır yoksa üstteki if çalışır
       req.session.userID = user._id; //Yukarıda tanımladığımız user'ın id'sini userID'ye atayacağız (Her kullanıcının farklı ıd'si vardı bu da o)(Hangi kullanıcının giriş işlemi yaptığını ayıt edebiliriz)
       res.status(200).json({
         status: 'success',
