@@ -28,14 +28,23 @@ exports.loginUser = async (req, res) => {
     const user = await User.findOne({ email }); // Kullanıcıdan aldığınız email değeriyle, veritabanında User modelindeki email alanı eşleşen bir kullanıcı belgesini bulmak için
     console.log(user);
     if (!user) {
-      res.status(400).send('BÖYLE BİR KULLANICI BULUNAMADI');
+      return res.status(400).json({
+        status: 'fail',
+        error: 'No such user found',
+      });
     }
     const same = await bcrypt.compare(password, user.password); //kullanıcının girdiği şifrenin, veritabanındaki kullanıcının şifresiyle eşleşip eşleşmediğini kontrol eder,Karşılaştırma sonucu same değişkenine atanır.
-    if (same) {//eğer şifreler eşleşirse çalışır yoksa üstteki if çalışır
+    if (same) {
+      //eğer şifreler eşleşirse çalışır yoksa üstteki if çalışır
       req.session.userID = user._id; //Yukarıda tanımladığımız user'ın id'sini userID'ye atayacağız (Her kullanıcının farklı ıd'si vardı bu da o)(Hangi kullanıcının giriş işlemi yaptığını ayıt edebiliriz)
       res.status(200).json({
         status: 'success',
         user,
+      });
+    } else {
+      res.status(400).json({
+        status: 'fail',
+        error: 'No such user found',
       });
     }
   } catch (error) {
@@ -50,13 +59,12 @@ exports.loginUser = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
-    const user = await User.findOne({ slug: req.params.slug }).populate('user');//belirtilen bir alanı referans olarak saklayan belgeleri başka bir koleksiyondan (burada "user" koleksiyonu) getirir(Çünkü öğretmen adını çekebilmek için)
-    res.status(200).json({ success: true, user })
-
+    const user = await User.findOne({ slug: req.params.slug }).populate('user'); //belirtilen bir alanı referans olarak saklayan belgeleri başka bir koleksiyondan (burada "user" koleksiyonu) getirir(Çünkü öğretmen adını çekebilmek için)
+    res.status(200).json({ success: true, user });
   } catch (error) {
     res.status(400).json({
       status: 'fail',
-      error, 
+      error,
     });
   }
 };
@@ -67,7 +75,7 @@ exports.createOrganizer = async (req, res) => {
     res.status(201).json({
       status: 'success',
       organizer,
-    });;
+    });
   } catch (error) {
     res.status(400).json({
       status: 'fail',
@@ -82,7 +90,7 @@ exports.createOrganization = async (req, res) => {
     res.status(201).json({
       status: 'success',
       organization,
-    });;
+    });
   } catch (error) {
     res.status(400).json({
       status: 'fail',
