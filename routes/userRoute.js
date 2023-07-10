@@ -7,6 +7,7 @@ router.route('/register').post(authController.createUser);//http://localhost:300
 router.route('/login').post(authController.loginUser);//http://localhost:3000/users/login
 router.route('/organizerRegister').post(authController.createOrganizer);//http://localhost:3000/users/organizer
 router.route('/organizer/organization').post(authController.createOrganizer);//http://localhost:3000/users/organizer/organization
+router.route("/:slug").get(authController.getUser);
 
 
 module.exports = router;

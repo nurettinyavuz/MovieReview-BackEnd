@@ -1,4 +1,5 @@
 const bcrypt = require('bcrypt');
+const express = require('express');
 const User = require('../models/User');
 const Organizer = require('../models/Organizer');
 const Organization = require('../models/Organization');
@@ -35,12 +36,27 @@ exports.loginUser = async (req, res) => {
       res.status(200).json({
         status: 'success',
         user,
-      });;
+      });
     }
   } catch (error) {
     res.status(400).json({
       status: 'fail',
       error,
+    });
+  }
+};
+
+//TEKİL KİSİ
+exports.getUser = async (req, res) => {
+  try {
+    //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
+    const user = await User.findOne({ slug: req.params.slug }).populate('user');//belirtilen bir alanı referans olarak saklayan belgeleri başka bir koleksiyondan (burada "user" koleksiyonu) getirir(Çünkü öğretmen adını çekebilmek için)
+    res.status(200).json({ success: true, user })
+
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error, 
     });
   }
 };

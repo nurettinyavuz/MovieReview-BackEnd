@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -21,7 +22,7 @@ mongoose
     useUnifiedTopology: true,
   })
   .then(() => {
-    console.log("DB Connected Successfully");
+    console.log('DB Connected Successfully');
 
     //Middlewares
     app.use(cors());
@@ -52,5 +53,5 @@ mongoose
     });
   })
   .catch((error) => {
-    console.log("DB Connection Error: ", error);
+    console.log('DB Connection Error: ', error);
   });
