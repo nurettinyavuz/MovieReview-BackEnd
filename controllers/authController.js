@@ -26,7 +26,6 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body; //İstek gövdesinden gelen email ve password değerlerini çıkartıyoruz.(Kullanıcıdan veriyi aldığımız kısım)
     const user = await User.findOne({ email }); // Kullanıcıdan aldığınız email değeriyle, veritabanında User modelindeki email alanı eşleşen bir kullanıcı belgesini bulmak için
-    console.log(user);
     if (!user) {
       return res.status(400).json({
         status: 'fail',
@@ -59,12 +58,16 @@ exports.loginUser = async (req, res) => {
 exports.getUser = async (req, res) => {
   try {
     //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
-    const user = await User.findOne({ slug: req.params.slug }).populate('user'); //belirtilen bir alanı referans olarak saklayan belgeleri başka bir koleksiyondan (burada "user" koleksiyonu) getirir(Çünkü öğretmen adını çekebilmek için)
-    res.status(200).json({ success: true, user });
+    const user = await User.findOne({ _id: req.params.id });
+    res.status(200).json({
+      success: true,
+      user,
+    });
+    console.log(user);
   } catch (error) {
     res.status(400).json({
       status: 'fail',
-      error,
+      error: error.message,
     });
   }
 };
