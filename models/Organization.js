@@ -23,7 +23,7 @@ const organizationSchema = new Schema({
     type:String,
     required:true
   },
-  EndDate:{
+  endDate:{
     type:String,
     required:true
   },
