@@ -20,11 +20,11 @@ const organizationSchema = new Schema({
     required: true,
   },
   startDate: {
-    type:String,
+    type:Date,
     required:true
   },
   endDate:{
-    type:String,
+    type:Date,
     required:true
   },
   category:{

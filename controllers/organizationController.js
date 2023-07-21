@@ -112,14 +112,22 @@ exports.getAllOrganization = async (req, res) => {
     // Tüm organizasyonları veritabanından çekin
     const organizations = await Organization.find();
 
+    // Tarihleri şuanki tarihe göre sırala (en yakın tarih en üste gelecek şekilde)
+    organizations.sort((a, b) => {
+      const aStartDate = new Date(a.startDate);
+      const bStartDate = new Date(b.startDate);
+      const currentDate = new Date();
+
+      const timeDifferenceA = Math.abs(currentDate - aStartDate);
+      const timeDifferenceB = Math.abs(currentDate - bStartDate);
+
+      return timeDifferenceA - timeDifferenceB;
+    });
+
     res.status(200).json({
       success: true,
       organizations,
     });
-    console.log(organizations);
-
-    // Bu kısım, tüm organizasyonları konsola yazdırarak kontrol etmek için kullanılabilir.
-    console.log(organizations);
   } catch (error) {
     res.status(400).json({
       status: 'fail',
@@ -127,3 +135,4 @@ exports.getAllOrganization = async (req, res) => {
     });
   }
 };
+
