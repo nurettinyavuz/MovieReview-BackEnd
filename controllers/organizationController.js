@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt');
 const express = require('express');
-const User = require('../models/User');
+//const User = require('../models/User');
 const Organizer = require('../models/Organizer');
 const Organization = require('../models/Organization');
 
@@ -87,3 +87,43 @@ exports.getOrganizer = async (req, res) => {
     });
   }
 }; 
+
+//TEKİL KİSİ
+exports.getOrganization = async (req, res) => {
+  try {
+    //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
+    const organization = await Organization.findOne({ _id: req.params.id });
+    res.status(200).json({
+      success: true,
+      organization,
+    });
+    console.log(organization);
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+}; 
+
+// Listeleme
+exports.getAllOrganization = async (req, res) => {
+  try {
+    // Tüm organizasyonları veritabanından çekin
+    const organizations = await Organization.find();
+
+    res.status(200).json({
+      success: true,
+      organizations,
+    });
+    console.log(organizations);
+
+    // Bu kısım, tüm organizasyonları konsola yazdırarak kontrol etmek için kullanılabilir.
+    console.log(organizations);
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
