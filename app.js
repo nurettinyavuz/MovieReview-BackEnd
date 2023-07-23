@@ -8,6 +8,9 @@ const MongoStore = require('connect-mongo');
 
 const pageRoute = require('./routes/pageRoute');
 const userRoute = require('./routes/userRoute');
+const organizationRoute =require('./routes/organizationRoute');
+const organizerRoute =require('./routes/organizerRoute');
+
 
 const app = express();
 
@@ -46,6 +49,9 @@ mongoose
     });
     app.use('/', pageRoute);
     app.use('/users', userRoute);
+    app.use('/organization', organizationRoute);
+    app.use('/organizer', organizerRoute);
+
 
     const port = 5000;
     app.listen(port, () => {
