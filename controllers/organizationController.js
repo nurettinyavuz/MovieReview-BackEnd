@@ -106,11 +106,19 @@ exports.getOrganization = async (req, res) => {
   }
 }; 
 
-// Listeleme
+// Organizasyon Listelemek 
 exports.getAllOrganization = async (req, res) => {
   try {
-    // Tüm organizasyonları veritabanından çekin
-    const organizations = await Organization.find();
+    const searchQuery = req.query.search; // Kullanıcının arama çubuğuna girdiği değeri alın
+    const filter = {};
+
+    if (searchQuery) {
+      // Arama sorgusu varsa, "name" alanında veritabanında regex ile filtrele
+      filter.name = { $regex: new RegExp(`^${searchQuery}`, 'i') };
+    }
+
+    // Tüm organizasyonları veritabanından çekin ve filtreleyin
+    const organizations = await Organization.find(filter);
 
     // Tarihleri şuanki tarihe göre sırala (en yakın tarih en üste gelecek şekilde)
     organizations.sort((a, b) => {
@@ -135,4 +143,6 @@ exports.getAllOrganization = async (req, res) => {
     });
   }
 };
+
+
 
