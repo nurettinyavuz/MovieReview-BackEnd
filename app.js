@@ -10,6 +10,7 @@ const pageRoute = require('./routes/pageRoute');
 const userRoute = require('./routes/userRoute');
 const organizationRoute =require('./routes/organizationRoute');
 const organizerRoute =require('./routes/organizerRoute');
+const dashboardRoute = require ('./routes/dashboardRoute');
 
 
 const app = express();
@@ -51,6 +52,7 @@ mongoose
     app.use('/users', userRoute);
     app.use('/organization', organizationRoute);
     app.use('/organizer', organizerRoute);
+    app.use('/dashboard', dashboardRoute);
 
 
     const port = 5000;

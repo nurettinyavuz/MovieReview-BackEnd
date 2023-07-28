@@ -4,42 +4,46 @@ const User = require('../models/User');
 const Organizer = require('../models/Organizer');
 const Organization = require('../models/Organization');
 
+
 exports.createUser = async (req, res) => {
   try {
     const { telephone, email } = req.body;
 
-
-    // Eğer telefon numarası daha önce kullanıldıysa ve e-posta kullanılmadıysa
-    if (telephone) {
-      const existingUserWithTelephone = await User.findOne({ telephone });
-      if (existingUserWithTelephone) {
-        return res.status(400).json({
-          status: 'fail',
-          message: 'Bu telefon numarası zaten kullanılıyor.',
-        });
-      }
+    // Telefon numarası veya e-posta adresi kontrolü
+    if (!telephone && !email) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Telefon numarası veya e-posta adresi girilmelidir.',
+      });
+    } else if ((!telephone && email) || (telephone && !email)) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Lütfen hem telefon numarası hem de e-posta adresi girin.',
+      });
     }
 
-    // Eğer e-posta adresi daha önce kullanıldıysa ve telefon numarası kullanılmadıysa
-    if (email) {
-      const existingUserWithEmail = await User.findOne({ email });
-      if (existingUserWithEmail) {
-        return res.status(400).json({
-          status: 'fail',
-          message: 'Bu e-posta adresi zaten kullanılıyor.',
-        });
-      }
+    // Eğer telefon numarası veya e-posta adresi daha önce kullanıldıysa
+    const existingUserTelephone = await User.findOne({ telephone }); //varsa eşitler yoksa null gönderir
+    const existingUserEmail = await User.findOne({ email }); //varsa eşitler yoksa null gönderir
+
+    if (existingUserTelephone && existingUserEmail) { // Her ikisi de null değilse
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Bu telefon numarası ve e-posta adresi zaten kullanılıyor.',
+      });
+      //Eğer girilen telephone  daha önce veritabanında kayıtlı ise null dönmeyecektir, kayıtlı değilse null döner ve hata vermez
+    } else if (existingUserTelephone) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Bu telefon numarası zaten kullanılıyor.',
+      });
+      //Eğer girilen e-posta adresi daha önce veritabanında kayıtlı ise null dönmeyecektir, kayıtlı değilse null döner ve hata vermez
+    } else if (existingUserEmail) {
+      return res.status(400).json({
+        status: 'fail',
+        message: 'Bu e-posta adresi zaten kullanılıyor.',
+      });
     }
-    if (telephone && email) {
-      const existingUserWithTelephone = await User.findOne({ telephone });
-      const existingUserWithEmail = await User.findOne({ email });
-    if (existingUserWithTelephone && existingUserWithEmail) {
-     return res.status(400).json({
-      status:'fail',
-      message:"telefon ve mail kullanımda"
-     })
-    }
-  }
 
     // Yeni kullanıcı oluşturuluyor
     const user = await User.create(req.body);
@@ -55,6 +59,8 @@ exports.createUser = async (req, res) => {
     });
   }
 };
+
+
 
 exports.loginUser = async (req, res) => {
   try {

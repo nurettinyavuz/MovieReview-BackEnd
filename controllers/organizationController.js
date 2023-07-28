@@ -44,7 +44,7 @@ exports.createOrganizer = async (req, res) => {
       if (!organizer) {
         return res.status(400).json({
           status: 'fail',
-          error: 'No such user found',
+          error: 'Girdiğiniz email yanlış',
         });
       }
       const same = await bcrypt.compare(password, organizer.password); //kullanıcının girdiği şifrenin, veritabanındaki kullanıcının şifresiyle eşleşip eşleşmediğini kontrol eder,Karşılaştırma sonucu same değişkenine atanır.
@@ -58,7 +58,7 @@ exports.createOrganizer = async (req, res) => {
       } else {
         res.status(400).json({
           status: 'fail',
-          error: 'No such user found',
+          error: 'Girdiğiniz sifre yanlış',
         });
       }
     } catch (error) {
