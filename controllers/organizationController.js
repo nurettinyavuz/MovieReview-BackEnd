@@ -21,6 +21,72 @@ exports.createOrganizer = async (req, res) => {
     }
   };
   
+  exports.createOrganizer = async (req, res) => {
+    try {
+      const { companyName, taxNumber, telephone, email } = req.body;
+  
+      // Telefon numarası veya e-posta adresi kontrolü
+      if (!telephone && !email && !companyName && !taxNumber) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Boş gönderilemez',
+        });
+      } else if ((!companyName || !taxNumber ||  !telephone || !taxNumber ||  !telephone  || !email)  ) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Boş Bırakılamaz',
+        });
+      }
+  
+      // Eğer telefon numarası veya e-posta adresi daha önce kullanıldıysa
+      const existingOrganizercompanyName = await User.findOne({ companyName });
+      const existingOrganizertaxNumber = await User.findOne({ taxNumber });
+      const existingOrganizerTelephone = await User.findOne({ telephone }); //varsa eşitler yoksa null gönderir
+      const existingOrganizerEmail = await User.findOne({ email }); //varsa eşitler yoksa null gönderir
+
+
+      if (existingOrganizercompanyName && existingOrganizertaxNumber && existingOrganizerTelephone && existingOrganizerEmail) { 
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Bu şirket adı, vergi numarası, telefon numarası ve e-posta adresi zaten kullanılıyor. Lütfen geçerli bilgileri giriniz.',
+        });
+      } else if (existingOrganizercompanyName) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Bu şirket adı zaten kullanılıyor. Lütfen farklı bir şirket adı giriniz.',
+        });
+      } else if (existingOrganizertaxNumber) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Bu vergi numarası zaten kullanılıyor. Lütfen farklı bir vergi numarası giriniz.',
+        });
+      } else if (existingOrganizerTelephone) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Bu telefon numarası zaten kullanılıyor. Lütfen farklı bir telefon numarası giriniz.',
+        });
+      } else if (existingOrganizerEmail) {
+        return res.status(400).json({
+          status: 'fail',
+          message: 'Bu e-posta adresi zaten kullanılıyor. Lütfen farklı bir e-posta adresi giriniz.',
+        });
+      }
+      
+  
+      // Yeni kullanıcı oluşturuluyor
+      const organizer = await Organizer.create(req.body);
+      res.status(201).json({
+        status: 'success',
+        organizer,
+      });
+    } catch (error) {
+      res.status(400).json({
+        status: 'fail',
+        error,
+      });
+    }
+  };
+  
   exports.createOrganization = async (req, res) => {
     try {
       const organization = await Organization.create(req.body);
