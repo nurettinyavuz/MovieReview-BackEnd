@@ -9,7 +9,7 @@ const MongoStore = require('connect-mongo');
 const pageRoute = require('./routes/pageRoute');
 const userRoute = require('./routes/userRoute');
 const organizationRoute =require('./routes/organizationRoute');
-const organizerRoute =require('./routes/organizerRoute');
+const adminRoute =require('./routes/adminRoute');
 const dashboardRoute = require ('./routes/dashboardRoute');
 
 
@@ -51,7 +51,7 @@ mongoose
     app.use('/', pageRoute);
     app.use('/users', userRoute);
     app.use('/organization', organizationRoute);
-    app.use('/organizer', organizerRoute);
+    app.use('/admin', adminRoute);
     app.use('/dashboard', dashboardRoute);
 
 

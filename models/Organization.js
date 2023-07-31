@@ -7,29 +7,29 @@ const organizationSchema = new Schema({
     type: String,
     required: true,
   },
+  title: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
     required: true,
   },
-  location: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: String,
+  fragmentURL: {
+    type: String, 
     required: true,
   },
   startDate: {
-    type:Date,
-    required:true
+    type: Date,
+    required: true,
   },
-  endDate:{
-    type:Date,
-    required:true
+  director: {
+    type: String,
+    required: true,
   },
-  category:{
-    type:String,
-    enum:["Concert","NightClub"],
+  category: {
+    type: String,
+    enum: ['Macera', 'Komedi'],
   },
 });
 

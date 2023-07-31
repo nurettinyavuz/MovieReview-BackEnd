@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const express = require('express');
 const User = require('../models/User');
-const Organizer = require('../models/Organizer');
 const Organization = require('../models/Organization');
 
 
@@ -60,8 +59,6 @@ exports.createUser = async (req, res) => {
   }
 };
 
-
-
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body; //İstek gövdesinden gelen email ve password değerlerini çıkartıyoruz.(Kullanıcıdan veriyi aldığımız kısım)
@@ -112,32 +109,4 @@ exports.getUser = async (req, res) => {
   }
 };
 
-exports.createOrganizer = async (req, res) => {
-  try {
-    const organizer = await Organizer.create(req.body);
-    res.status(201).json({
-      status: 'success',
-      organizer,
-    });
-  } catch (error) {
-    res.status(400).json({
-      status: 'fail',
-      error,
-    });
-  }
-};
 
-exports.createOrganization = async (req, res) => {
-  try {
-    const organization = await Organization.create(req.body);
-    res.status(201).json({
-      status: 'success',
-      organization,
-    });
-  } catch (error) {
-    res.status(400).json({
-      status: 'fail',
-      error,
-    });
-  }
-};
