@@ -5,6 +5,8 @@ const slugify = require('slugify');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const fileUpload = require('express-fileupload');
+
 
 const pageRoute = require('./routes/pageRoute');
 const userRoute = require('./routes/userRoute');
