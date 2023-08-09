@@ -15,8 +15,12 @@ const organizationSchema = new Schema({
     type: String,
     required: true,
   },
+  time: {
+    type: String,
+    required: true,
+  },
   fragmentURL: {
-    type: String, 
+    type: String,
     required: true,
   },
   startDate: {
@@ -30,6 +34,10 @@ const organizationSchema = new Schema({
   category: {
     type: String,
     enum: ['Macera', 'Komedi'],
+  },
+  OrganizationKind: {
+    type: String,
+    enum: ['Film', 'Dizi'],
   },
 });
 
