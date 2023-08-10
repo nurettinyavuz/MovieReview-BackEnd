@@ -1,25 +1,25 @@
 const bcrypt = require('bcrypt');
 const express = require('express');
 //const User = require('../models/User');
-const Organization = require('../models/Organization');
+const movieSeries = require('../models/movieSeries');
 
 
-  
-  exports.createOrganization = async (req, res) => {
-    try {
-      const organization = await Organization.create(req.body);
-      res.status(201).json({
-        status: 'success',
-        organization,
-      });
-    } catch (error) {
-      res.status(400).json({
-        status: 'fail',
-        error,
-      });
-    }
-  };
- /* 
+exports.createMovieSeries = async (req, res) => {
+  try {
+    const movieseries = await movieSeries.create(req.body);
+    res.status(201).json({
+      status: 'success',
+      movieseries,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error,
+    });
+  }
+};
+
+/* 
   exports.loginAdmin = async (req, res) => {
     try {
       const { email, password } = req.body; //İstek gövdesinden gelen email ve password değerlerini çıkartıyoruz.(Kullanıcıdan veriyi aldığımız kısım)
@@ -53,7 +53,6 @@ const Organization = require('../models/Organization');
     }
   };
   
-
 //TEKİL KİSİ
 exports.getAdmin = async (req, res) => {
   try {
@@ -72,27 +71,27 @@ exports.getAdmin = async (req, res) => {
   }
 }; 
 */
- 
+
 //TEKİL KİSİ
-exports.getOrganization = async (req, res) => {
+exports.getMovieSeries = async (req, res) => {
   try {
     //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
-    const organization = await Organization.findOne({ _id: req.params.id });
+    const movieseries = await movieSeries.findOne({ _id: req.params.id });
     res.status(200).json({
       success: true,
-      organization,
+      movieseries,
     });
-    console.log(organization);
+    console.log(movieseries);
   } catch (error) {
     res.status(400).json({
       status: 'fail',
       error: error.message,
     });
   }
-}; 
+};
 
-// Organizasyon Listelemek 
-exports.getAllOrganization = async (req, res) => {
+// Organizasyon Listelemek
+exports.getAllMovieSeries = async (req, res) => {
   try {
     const searchQuery = req.query.search; // Kullanıcının arama çubuğuna girdiği değeri alın
     const filter = {};
@@ -103,10 +102,10 @@ exports.getAllOrganization = async (req, res) => {
     }
 
     // Tüm organizasyonları veritabanından çekin ve filtreleyin
-    const organizations = await Organization.find(filter);
+    const moviesSeries = await movieSeries.find(filter);
 
     // Tarihleri şuanki tarihe göre sırala (en yakın tarih en üste gelecek şekilde)
-    organizations.sort((a, b) => {
+    moviesSeries.sort((a, b) => {
       const aStartDate = new Date(a.startDate);
       const bStartDate = new Date(b.startDate);
       const currentDate = new Date();
@@ -119,7 +118,7 @@ exports.getAllOrganization = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      organizations,
+      moviesSeries,
     });
   } catch (error) {
     res.status(400).json({
@@ -128,6 +127,3 @@ exports.getAllOrganization = async (req, res) => {
     });
   }
 };
-
-
-

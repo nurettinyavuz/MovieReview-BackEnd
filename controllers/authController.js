@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const express = require('express');
 const User = require('../models/User');
-const Organization = require('../models/Organization');
 
 
 exports.createUser = async (req, res) => {

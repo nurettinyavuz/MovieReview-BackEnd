@@ -35,7 +35,7 @@ const organizationSchema = new Schema({
     type: String,
     enum: ['Macera', 'Komedi'],
   },
-  OrganizationKind: {
+  MovieKind: {
     type: String,
     enum: ['Film', 'Dizi'],
   },

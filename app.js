@@ -10,7 +10,7 @@ const fileUpload = require('express-fileupload');
 
 const pageRoute = require('./routes/pageRoute');
 const userRoute = require('./routes/userRoute');
-const organizationRoute =require('./routes/organizationRoute');
+const movieSeriesRoute =require('./routes/movieSeriesRoute');
 const adminRoute =require('./routes/adminRoute');
 const dashboardRoute = require ('./routes/dashboardRoute');
 
@@ -52,7 +52,7 @@ mongoose
     });
     app.use('/', pageRoute);
     app.use('/users', userRoute);
-    app.use('/organization', organizationRoute);
+    app.use('/movieSeries', movieSeriesRoute);
     app.use('/admin', adminRoute);
     app.use('/dashboard', dashboardRoute);
 
