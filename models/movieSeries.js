@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 
-const organizationSchema = new Schema({
+const movieSeriesSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -16,10 +16,6 @@ const organizationSchema = new Schema({
     required: true,
   },
   time: {
-    type: String,
-    required: true,
-  },
-  fragmentURL: {
     type: String,
     required: true,
   },
@@ -39,7 +35,11 @@ const organizationSchema = new Schema({
     type: String,
     enum: ['Film', 'Dizi'],
   },
+  comments:{
+    type:Schema.Types.ObjectId,
+    ref:'Comment',
+  }
 });
 
-const Organization = mongoose.model('Organization', organizationSchema);
-module.exports = Organization;
+const movieSeries = mongoose.model('MovieSeries', movieSeriesSchema);
+module.exports = movieSeries;

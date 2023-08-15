@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const express = require('express');
 //const User = require('../models/User');
 const movieSeries = require('../models/movieSeries');
+const Comment = require('../models/Comment');
+
 
 
 exports.createMovieSeries = async (req, res) => {
@@ -89,6 +91,46 @@ exports.getMovieSeries = async (req, res) => {
     });
   }
 };
+
+exports.movieSeriesComment = async (req, res) => {
+  try {
+    const { filmId, userId, content } = req.body;
+
+    const createComment = await Comment.create({
+      film: filmId,
+      user: userId,
+      comment: content,
+    });
+
+    const movieseries = await movieSeries.findOne({ _id: req.params.id });
+    if (!movieseries) {
+      return res.status(404).json({
+        status: 'fail',
+        error: 'Film series not found.',
+      });
+    }
+
+    // movieseries.comments'a yorumun ObjectId'sini eklemek
+    movieseries.comments = createComment._id; // Burada _id'yi kullanıyorum, bu örnekte yorumun ObjectId'sini alıyorum
+
+    await movieseries.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Comment added successfully.',
+      createComment,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
+
+
+
 
 // Organizasyon Listelemek
 exports.getAllMovieSeries = async (req, res) => {

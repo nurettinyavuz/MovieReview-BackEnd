@@ -27,7 +27,7 @@ exports.createUser = async (req, res) => {
     if (existingUserTelephone && existingUserEmail) { // Her ikisi de null değilse
       return res.status(400).json({
         status: 'fail',
-        message: 'Bu telefon numarası ve e-posta adresi zaten kullanılıyor.',
+        message: 'Bu telefon numarası ve e-posta adresi zaten kullanılıyor.',a
       });
       //Eğer girilen telephone  daha önce veritabanında kayıtlı ise null dönmeyecektir, kayıtlı değilse null döner ve hata vermez
     } else if (existingUserTelephone) {
