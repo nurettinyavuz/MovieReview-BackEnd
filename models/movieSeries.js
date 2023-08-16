@@ -35,10 +35,10 @@ const movieSeriesSchema = new Schema({
     type: String,
     enum: ['Film', 'Dizi'],
   },
-  comments:{
-    type:Schema.Types.ObjectId,
-    ref:'Comment',
-  }
+  comments: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Comment',
+  }]
 });
 
 const movieSeries = mongoose.model('MovieSeries', movieSeriesSchema);

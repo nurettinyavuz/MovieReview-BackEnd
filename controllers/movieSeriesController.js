@@ -4,8 +4,6 @@ const express = require('express');
 const movieSeries = require('../models/movieSeries');
 const Comment = require('../models/Comment');
 
-
-
 exports.createMovieSeries = async (req, res) => {
   try {
     const movieseries = await movieSeries.create(req.body);
@@ -94,13 +92,9 @@ exports.getMovieSeries = async (req, res) => {
 
 exports.movieSeriesComment = async (req, res) => {
   try {
-    const { filmId, userId, content } = req.body;
+    const {content}  = req.body;
 
-    const createComment = await Comment.create({
-      film: filmId,
-      user: userId,
-      comment: content,
-    });
+    const createComment = await Comment.create({comment: content});
 
     const movieseries = await movieSeries.findOne({ _id: req.params.id });
     if (!movieseries) {
@@ -110,8 +104,12 @@ exports.movieSeriesComment = async (req, res) => {
       });
     }
 
-    // movieseries.comments'a yorumun ObjectId'sini eklemek
-    movieseries.comments = createComment._id; // Burada _id'yi kullanıyorum, bu örnekte yorumun ObjectId'sini alıyorum
+    // Mevcut yorumları alıp yeni yorumun ObjectId'sini eklemek
+    if (Array.isArray(movieseries.comments)) {
+      movieseries.comments.push(createComment._id);
+    } else {
+      movieseries.comments = [createComment._id];
+    }
 
     await movieseries.save();
 
@@ -127,10 +125,6 @@ exports.movieSeriesComment = async (req, res) => {
     });
   }
 };
-
-
-
-
 
 // Organizasyon Listelemek
 exports.getAllMovieSeries = async (req, res) => {
