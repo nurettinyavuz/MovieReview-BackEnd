@@ -90,11 +90,12 @@ exports.getMovieSeries = async (req, res) => {
   }
 };
 
+//Yorum yapma
 exports.movieSeriesComment = async (req, res) => {
   try {
-    const {content}  = req.body;
+    const { content } = req.body;
 
-    const createComment = await Comment.create({comment: content});
+    const createComment = await Comment.create({ comment: content });
 
     const movieseries = await movieSeries.findOne({ _id: req.params.id });
     if (!movieseries) {
@@ -118,6 +119,17 @@ exports.movieSeriesComment = async (req, res) => {
       message: 'Comment added successfully.',
       createComment,
     });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
+//Yorum silme
+exports.deleteComment = async (req, res) => {
+  try {
   } catch (error) {
     res.status(400).json({
       status: 'fail',
