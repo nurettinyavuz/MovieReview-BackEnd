@@ -6,6 +6,8 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const fileUpload = require('express-fileupload');
+const jwt = require('jsonwebtoken');
+
 
 
 const pageRoute = require('./routes/pageRoute');

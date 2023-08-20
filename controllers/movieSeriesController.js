@@ -72,7 +72,7 @@ exports.getAdmin = async (req, res) => {
 }; 
 */
 
-//TEKİL KİSİ
+//TEKİL Film
 exports.getMovieSeries = async (req, res) => {
   try {
     //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
@@ -91,9 +91,9 @@ exports.getMovieSeries = async (req, res) => {
 };
 
 //Yorum yapma
-exports.movieSeriesComment = async (req, res) => {
+exports.CreateComment = async (req, res) => {
   try {
-    const { content } = req.body;
+    const { content,userId } = req.body;
 
     const createComment = await Comment.create({ comment: content });
 
@@ -106,9 +106,9 @@ exports.movieSeriesComment = async (req, res) => {
     }
 
     // Mevcut yorumları alıp yeni yorumun ObjectId'sini eklemek
-    if (Array.isArray(movieseries.comments)) {
-      movieseries.comments.push(createComment._id);
-    } else {
+    if (Array.isArray(movieseries.comments)) {//Dizi olup olmadığını kontrol eder
+      movieseries.comments.push(createComment._id);//Dizi ise dizinin sonuna ekler
+    } else {//bir dizi değilse (yani daha önce hiç yorum eklenmemişse)
       movieseries.comments = [createComment._id];
     }
 
@@ -130,6 +130,7 @@ exports.movieSeriesComment = async (req, res) => {
 //Yorum silme
 exports.deleteComment = async (req, res) => {
   try {
+    
   } catch (error) {
     res.status(400).json({
       status: 'fail',

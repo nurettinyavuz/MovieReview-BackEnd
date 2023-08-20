@@ -1,6 +1,7 @@
 const bcrypt = require('bcrypt');
 const express = require('express');
 const User = require('../models/User');
+const jwt = require ('jsonwebtoken')
 
 
 exports.createUser = async (req, res) => {
@@ -71,10 +72,12 @@ exports.loginUser = async (req, res) => {
     const same = await bcrypt.compare(password, user.password); //kullanıcının girdiği şifrenin, veritabanındaki kullanıcının şifresiyle eşleşip eşleşmediğini kontrol eder,Karşılaştırma sonucu same değişkenine atanır.
     if (same) {
       //eğer şifreler eşleşirse çalışır yoksa üstteki if çalışır
+      const token = createToken(user._id);
       req.session.userID = user._id; //Yukarıda tanımladığımız user'ın id'sini userID'ye atayacağız (Her kullanıcının farklı ıd'si vardı bu da o)(Hangi kullanıcının giriş işlemi yaptığını ayıt edebiliriz)
       res.status(200).json({
         status: 'success',
         user,
+        token,
       });
     } else {
       res.status(400).json({
@@ -109,3 +112,8 @@ exports.getUser = async (req, res) => {
 };
 
 
+const createToken = (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: '1d',
+  });
+};
