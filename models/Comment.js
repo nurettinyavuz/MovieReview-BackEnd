@@ -13,6 +13,11 @@ const commentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Film',
   },
+  star: {
+    type: Number,
+    min: 0,
+    max: 5,
+  },
   comment: String,
 });
 

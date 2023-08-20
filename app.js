@@ -13,6 +13,7 @@ const jwt = require('jsonwebtoken');
 const pageRoute = require('./routes/pageRoute');
 const userRoute = require('./routes/userRoute');
 const movieSeriesRoute =require('./routes/movieSeriesRoute');
+const commentsRoute =require('./routes/commentsRoute');
 const adminRoute =require('./routes/adminRoute');
 const dashboardRoute = require ('./routes/dashboardRoute');
 
@@ -55,6 +56,7 @@ mongoose
     app.use('/', pageRoute);
     app.use('/users', userRoute);
     app.use('/movieSeries', movieSeriesRoute);
+    app.use('/comments', commentsRoute);
     app.use('/admin', adminRoute);
     app.use('/dashboard', dashboardRoute);
 
