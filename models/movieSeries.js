@@ -31,7 +31,7 @@ const movieSeriesSchema = new Schema({
     type: String,
     enum: ['Macera', 'Komedi'],
   },
-  MovieKind: {
+  MovieOrSeries: {
     type: String,
     enum: ['Film', 'Dizi'],
   },

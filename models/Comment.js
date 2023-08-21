@@ -13,13 +13,14 @@ const commentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Film',
   },
-  star: {
+  rating: {
     type: Number,
     min: 0,
     max: 5,
+    required:true
   },
   comment: String,
 });
 
-const Comment = mongoose.model('Comment', commentSchema);
+const Comment = mongoose.model('Comment', commentSchema); 
 module.exports = Comment;

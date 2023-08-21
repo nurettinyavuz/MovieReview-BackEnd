@@ -6,10 +6,10 @@ const Comment = require('../models/Comment');
 //Create Comment
 exports.CreateComment = async (req, res) => {
   try {
-    const { content, userId, star } = req.body;
+    const { content, userId, rating } = req.body;
 
     // Kullanıcıdan gelen yıldız değerini kontrol etmek
-    if (star < 1 || star > 5) {
+    if (rating < 1 || rating > 5) {
       return res.status(400).json({
         status: 'fail',
         error: 'Star value must be between 1 and 5.',
@@ -19,10 +19,10 @@ exports.CreateComment = async (req, res) => {
     const createComment = await Comment.create({
       comment: content,
       createdBy: userId,
-      star:star,
+      rating:rating,
     });
 
-    const movieseries = await movieSeries.findOne({ _id: req.params.id });
+    const movieseries = await movieSeries.findOne({ _id: req.params.id }); 
     if (!movieseries) {
       return res.status(404).json({
         status: 'fail',
@@ -57,9 +57,66 @@ exports.CreateComment = async (req, res) => {
 //Delete Comment
 exports.deleteComment = async (req, res) => {
   try {
+    
   } catch (error) {
     res.status(400).json({
       status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
+//Get Comment
+exports.getComment = async (req, res) => {
+  try {
+    //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
+    const comment = await Comment.findOne({ _id: req.params.id });
+    res.status(200).json({
+      success: true,
+      comment,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
+//All Comment
+exports.getAllComments = async (req, res) => {
+  try {
+
+    const comments = await movieSeries.find({id:req.params._id});
+
+    res.status(200).json({
+      success: true,
+      comments,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
+
+exports.calculateAverageRating = async (req,res,filmId) => {
+  try {
+    const comments = await Comment.find({ film: filmId });
+
+    if (comments.length === 0) {
+      return 0; // Yorum yoksa ortalama 0 olur
+    }
+
+    const totalRating = comments.reduce((sum, comment) => sum + comment.rating, 0);
+    const averageRating = totalRating / comments.length;
+
+    return averageRating;
+  } catch (error) {
+    res.status(400).json({
+      success: false,
       error: error.message,
     });
   }
