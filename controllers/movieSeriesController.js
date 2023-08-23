@@ -75,7 +75,6 @@ exports.getAdmin = async (req, res) => {
 //TEKİL Film
 exports.getMovieSeries = async (req, res) => {
   try {
-    //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
     const movieseries = await movieSeries.findOne({ _id: req.params.id });
     res.status(200).json({
       success: true,

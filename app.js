@@ -57,6 +57,7 @@ mongoose
     app.use('/users', userRoute);
     app.use('/movieSeries', movieSeriesRoute);
     app.use('/comments', commentsRoute);
+    app.use('/rating', commentsRoute);
     app.use('/admin', adminRoute);
     app.use('/dashboard', dashboardRoute);
 

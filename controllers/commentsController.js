@@ -6,7 +6,7 @@ const Comment = require('../models/Comment');
 //Create Comment
 exports.CreateComment = async (req, res) => {
   try {
-    const { content, userId, rating } = req.body;
+    const { comment, user, rating } = req.body;
 
     // Kullanıcıdan gelen yıldız değerini kontrol etmek
     if (rating < 1 || rating > 5) {
@@ -17,8 +17,8 @@ exports.CreateComment = async (req, res) => {
     }
 
     const createComment = await Comment.create({
-      comment: content,
-      createdBy: userId,
+      comment: comment,
+      createdBy: user,
       rating:rating,
     });
 
@@ -69,7 +69,6 @@ exports.deleteComment = async (req, res) => {
 //Get Comment
 exports.getComment = async (req, res) => {
   try {
-    //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
     const comment = await Comment.findOne({ _id: req.params.id });
     res.status(200).json({
       success: true,
@@ -86,12 +85,19 @@ exports.getComment = async (req, res) => {
 //All Comment
 exports.getAllComments = async (req, res) => {
   try {
-
-    const comments = await movieSeries.find({id:req.params._id});
+    const movieId = req.params.id;//hangi film veya dizi için yorumları çekeceğimizi belirler
+    const movie = await movieSeries.findById(movieId).populate('comments');//Yukarıda çekdiğimiz filmin id'sine ait bilgi ile populate yardımı ile comments'i  çektik 
+    
+    if (!movie) {
+      return res.status(404).json({
+        success: false,
+        message: 'Film veya dizi bulunamadı.',
+      });
+    }
 
     res.status(200).json({
       success: true,
-      comments,
+      comments: movie.comments,
     });
   } catch (error) {
     res.status(400).json({

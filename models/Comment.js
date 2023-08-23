@@ -17,9 +17,10 @@ const commentSchema = new Schema({
     type: Number,
     min: 0,
     max: 5,
-    required:true
   },
-  comment: String,
+  comment:{
+  type:String,
+  } 
 });
 
 const Comment = mongoose.model('Comment', commentSchema); 
