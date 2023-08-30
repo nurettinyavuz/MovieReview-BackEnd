@@ -1,5 +1,6 @@
 const express = require('express');
 const authController = require('../controllers/authController');
+const authMiddleware = require ('../Middlewares/authMiddleware');
 
 
 const router = express.Router();
@@ -8,5 +9,6 @@ const router = express.Router();
 router.route('/:id').get(authController.getUser);
 router.route('/register').post(authController.createUser);//http://localhost:5000/users/register
 router.route('/login').post(authController.loginUser);//http://localhost:5000/users/login
+router.route('/dashboard').get(authMiddleware.authenticateToken, authController.getDashboardPage);
 
 module.exports = router;

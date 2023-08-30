@@ -7,6 +7,8 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const fileUpload = require('express-fileupload');
 const jwt = require('jsonwebtoken');
+const cookieParser = require('cookie-parser');
+
 
 
 
@@ -46,6 +48,7 @@ mongoose
         store: MongoStore.create({ mongoUrl: mongoURL }),
       })
     );
+    app.use(cookieParser());
 
     //ROUTES
     app.use('*', (req, res, next) => {

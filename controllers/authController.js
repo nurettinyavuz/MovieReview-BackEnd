@@ -1,8 +1,7 @@
 const bcrypt = require('bcrypt');
 const express = require('express');
 const User = require('../models/User');
-const jwt = require ('jsonwebtoken')
-
+const jwt = require('jsonwebtoken');
 
 exports.createUser = async (req, res) => {
   try {
@@ -25,7 +24,8 @@ exports.createUser = async (req, res) => {
     const existingUserTelephone = await User.findOne({ telephone }); //varsa eşitler yoksa null gönderir
     const existingUserEmail = await User.findOne({ email }); //varsa eşitler yoksa null gönderir
 
-    if (existingUserTelephone && existingUserEmail) { // Her ikisi de null değilse
+    if (existingUserTelephone && existingUserEmail) {
+      // Her ikisi de null değilse
       return res.status(400).json({
         status: 'fail',
         message: 'Bu telefon numarası ve e-posta adresi zaten kullanılıyor.',
@@ -73,12 +73,11 @@ exports.loginUser = async (req, res) => {
     if (same) {
       //eğer şifreler eşleşirse çalışır yoksa üstteki if çalışır
       const token = createToken(user._id);
-      req.session.userID = user._id; //Yukarıda tanımladığımız user'ın id'sini userID'ye atayacağız (Her kullanıcının farklı ıd'si vardı bu da o)(Hangi kullanıcının giriş işlemi yaptığını ayıt edebiliriz)
-      res.status(200).json({
-        status: 'success',
-        user,
-        token,
-      });
+      res.cookie('jwt', token, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24,//saniye,dakika,saatigün
+      }); //Yukarıda tanımladığımız user'ın id'sini userID'ye atayacağız (Her kullanıcının farklı ıd'si vardı bu da o)(Hangi kullanıcının giriş işlemi yaptığını ayıt edebiliriz)
+      res.redirect('/users/dashoard');
     } else {
       res.status(400).json({
         status: 'fail',
@@ -111,9 +110,14 @@ exports.getUser = async (req, res) => {
   }
 };
 
-
-const createToken = (userId) => {
+exports.createToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: '1d',
+  });
+};
+
+exports.getDashboardPage = (req, res) => {
+  res.render('dashboard', {
+    link: 'dashboard',
   });
 };
