@@ -61,29 +61,90 @@ exports.createUser = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body; //İstek gövdesinden gelen email ve password değerlerini çıkartıyoruz.(Kullanıcıdan veriyi aldığımız kısım)
-    const user = await User.findOne({ email }); // Kullanıcıdan aldığınız email değeriyle, veritabanında User modelindeki email alanı eşleşen bir kullanıcı belgesini bulmak için
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
     if (!user) {
       return res.status(400).json({
         status: 'fail',
         error: 'Kayitli kullanici bulunamadi',
       });
     }
-    const same = await bcrypt.compare(password, user.password); //kullanıcının girdiği şifrenin, veritabanındaki kullanıcının şifresiyle eşleşip eşleşmediğini kontrol eder,Karşılaştırma sonucu same değişkenine atanır.
-    if (same) {
-      //eğer şifreler eşleşirse çalışır yoksa üstteki if çalışır
-      const token = createToken(user._id);
-      res.cookie('jwt', token, {
-        httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 24,//saniye,dakika,saatigün
-      }); //Yukarıda tanımladığımız user'ın id'sini userID'ye atayacağız (Her kullanıcının farklı ıd'si vardı bu da o)(Hangi kullanıcının giriş işlemi yaptığını ayıt edebiliriz)
-      res.redirect('/users/dashoard');
-    } else {
+
+    const same = await bcrypt.compare(password, user.password);
+
+    if (!same){
       res.status(400).json({
         status: 'fail',
         error: 'Girdiginiz şifre yanlis',
       });
     }
+
+    const accessToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '2m' }
+    );
+
+    const refreshToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.REFRESH_TOKEN_SECRET,//süre belirlemedim sonsuz süre olacak
+    );
+    
+    res.status(200).json({
+      success: true,
+      user,
+      accessToken,
+      refreshToken,
+    });
+
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error,
+    });
+  }
+};
+
+exports.logoutUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json({
+        status: 'fail',
+        error: 'Kayitli kullanici bulunamadi',
+      });
+    }
+
+    const same = await bcrypt.compare(password, user.password);
+
+    if (!same){
+      res.status(400).json({
+        status: 'fail',
+        error: 'Girdiginiz şifre yanlis',
+      });
+    }
+
+    const accessToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '2m' }
+    );
+
+    const refreshToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.REFRESH_TOKEN_SECRET,//süre belirlemedim sonsuz süre olacak
+    );
+    
+    res.status(200).json({
+      success: true,
+      user,
+      accessToken,
+      refreshToken,
+    });
+
   } catch (error) {
     res.status(400).json({
       status: 'fail',
@@ -111,9 +172,19 @@ exports.getUser = async (req, res) => {
 };
 
 exports.createToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, {
+  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
     expiresIn: '1d',
   });
+  return token;
+};
+
+/* 
+exports.createToken = (userId) => {
+  return jwt.sign({ userId }, process.env.JWT_SECRET, {
+    expiresIn: '3600',
+  });
+  console.log(token);  
+
 };
 
 exports.getDashboardPage = (req, res) => {
@@ -121,3 +192,4 @@ exports.getDashboardPage = (req, res) => {
     link: 'dashboard',
   });
 };
+*/

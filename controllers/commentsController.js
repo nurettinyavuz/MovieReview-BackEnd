@@ -127,3 +127,19 @@ exports.calculateAverageRating = async (req,res,filmId) => {
     });
   }
 };
+
+//Get Comment
+exports.LikeOrDislike = async (req, res) => {
+  try {
+    const comment = await Comment.findOne({ _id: req.params.id });
+    res.status(200).json({
+      success: true,
+      comment,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
