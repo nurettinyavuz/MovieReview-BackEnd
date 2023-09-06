@@ -91,15 +91,9 @@ exports.loginUser = async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET,//süre belirlemedim sonsuz süre olacak
       { expiresIn: '1m' }
     );
-       
-    const postmanAccessToken = jwt.sign(
-      { userId: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '2m' }
-    );
 
     // Erişim belirtecini Postman'de "Cookie" başlığına eklemek için aşağıdaki kodu kullanın.
-    res.setHeader('Set-Cookie', `accessToken=${postmanAccessToken}; Path=/`);
+    res.setHeader('Set-Cookie', `accessToken=${accessToken}; Path=/`);
 
     res.status(200).json({
       success: true,
