@@ -54,10 +54,34 @@ exports.CreateComment = async (req, res) => {
   }
 };
 
-//Delete Comment
+// Delete Comment
 exports.deleteComment = async (req, res) => {
   try {
-    
+    const commentId = req.params.commentId; // Silinecek yorumun ID'sini al
+
+    // Yorumu veritabanından bul
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({
+        status: 'fail',
+        error: 'Comment not found.',
+      });
+    }
+
+    // Yorumu veritabanından sil
+    await Comment.findByIdAndDelete(commentId);
+
+    // Yorumun bağlı olduğu film serisinden kaldır
+    const movieseries = await movieSeries.findOne({ comments: commentId });
+    if (movieseries) {
+      movieseries.comments.pull(commentId);
+      await movieseries.save();
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Comment deleted successfully.',
+    });
   } catch (error) {
     res.status(400).json({
       status: 'fail',

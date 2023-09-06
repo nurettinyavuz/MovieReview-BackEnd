@@ -83,20 +83,31 @@ exports.loginUser = async (req, res) => {
     const accessToken = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '2m' }
+      { expiresIn: '30s' }
     );
 
     const refreshToken = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.REFRESH_TOKEN_SECRET,//süre belirlemedim sonsuz süre olacak
+      { expiresIn: '1m' }
     );
-    
+       
+    const postmanAccessToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '2m' }
+    );
+
+    // Erişim belirtecini Postman'de "Cookie" başlığına eklemek için aşağıdaki kodu kullanın.
+    res.setHeader('Set-Cookie', `accessToken=${postmanAccessToken}; Path=/`);
+
     res.status(200).json({
       success: true,
       user,
       accessToken,
       refreshToken,
     });
+
 
   } catch (error) {
     res.status(400).json({
@@ -170,7 +181,7 @@ exports.getUser = async (req, res) => {
     });
   }
 };
-
+/* 
 exports.extractCookie = async (req, res) => {
   try {
     const cookie = req.cookies.JWT_SECRET; // Çerez adını doğru şekilde belirtmelisiniz
@@ -185,7 +196,7 @@ exports.extractCookie = async (req, res) => {
     });
   }
 };
-
+*/
 /* 
 exports.createToken = (userId) => {
   const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
