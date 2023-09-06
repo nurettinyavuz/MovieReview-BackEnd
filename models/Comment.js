@@ -20,14 +20,15 @@ const commentSchema = new Schema({
   },
   comment: {
     type: String,
-  },
+  }
+  /* ,
   createdDate: {
     type:Date,
     default:Date.now
   },
   updateDate: {
     type:Date,
-  }
+  }*/
 });
 
 const Comment = mongoose.model('Comment', commentSchema);

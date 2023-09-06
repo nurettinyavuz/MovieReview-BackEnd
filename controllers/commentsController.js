@@ -90,6 +90,37 @@ exports.deleteComment = async (req, res) => {
   }
 };
 
+// Update Comment
+exports.updateComment = async (req, res) => {
+  try {
+    const commentId = req.params.commentId; // Güncellenecek yorumun ID'sini al
+    const updatedCommentData = req.body; // Yeni yorum verilerini al
+
+    // Yorumu veritabanından bul
+    const comment = await Comment.findByIdAndUpdate(commentId, updatedCommentData, {
+      new: true, // Güncellenmiş yorumu döndür
+    });
+
+    if (!comment) {
+      return res.status(404).json({
+        status: 'fail',
+        error: 'Comment not found.',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Comment updated successfully.',
+      data: comment, // Güncellenmiş yorum verilerini yanıt olarak dön
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
 //Get Comment
 exports.getComment = async (req, res) => {
   try {

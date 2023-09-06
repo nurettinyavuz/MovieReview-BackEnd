@@ -175,28 +175,4 @@ exports.getUser = async (req, res) => {
     });
   }
 };
-/* 
-exports.extractCookie = async (req, res) => {
-  try {
-    const cookie = req.cookies.JWT_SECRET; // Çerez adını doğru şekilde belirtmelisiniz
-    res.status(200).json({
-      success: true,
-      your_cookie: cookie,
-    });
-  } catch (error) {
-    res.status(400).json({
-      status: 'fail',
-      error: error.message,
-    });
-  }
-};
-*/
-/* 
-exports.createToken = (userId) => {
-  const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
-    expiresIn: '1d',
-  });
-  return token;
-};
-*/
 
