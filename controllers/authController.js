@@ -74,7 +74,7 @@ exports.loginUser = async (req, res) => {
     const same = await bcrypt.compare(password, user.password);
 
     if (!same){
-      res.status(400).json({
+      return res.status(400).json({
         status: 'fail',
         error: 'Girdiginiz şifre yanlis',
       });
