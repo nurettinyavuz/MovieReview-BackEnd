@@ -141,7 +141,7 @@ exports.getComment = async (req, res) => {
 exports.getAllComments = async (req, res) => {
   try {
     const movieId = req.params.id;//hangi film veya dizi için yorumları çekeceğimizi belirler
-    const movie = await movieSeries.findById(movieId).populate('comments');//Yukarıda çekdiğimiz filmin id'sine ait bilgi ile populate yardımı ile comments'i  çektik 
+    const movie = await movieSeries.findById(movieId).populate('comments').sort('-createdDate');;//Yukarıda çekdiğimiz filmin id'sine ait bilgi ile populate yardımı ile comments'i  çektik 
     
     if (!movie) {
       return res.status(404).json({
@@ -183,7 +183,7 @@ exports.calculateAverageRating = async (req,res,filmId) => {
   }
 };
 
-//Get Comment
+
 exports.LikeOrDislike = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
