@@ -175,3 +175,16 @@ exports.getUser = async (req, res) => {
   }
 };
 
+exports.userLevel = async (req, res) => {
+  try {
+    res.status(200).json({
+      success: true,
+      
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
