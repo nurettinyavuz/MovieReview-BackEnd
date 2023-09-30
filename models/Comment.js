@@ -24,7 +24,15 @@ const commentSchema = new Schema({
   createdDate: {
     type:Date,
     default:Date.now
-  }
+  },
+  likes: {
+    type: Array,
+    default: [],
+  },
+  dislikes: {
+    type: Array,
+    default: [],
+  },
 });
 
 const Comment = mongoose.model('Comment', commentSchema);

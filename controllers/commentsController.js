@@ -184,9 +184,32 @@ exports.calculateAverageRating = async (req,res,filmId) => {
 };
 
 
-exports.LikeOrDislike = async (req, res) => {
+exports.Like = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
+    if(!comment.likes.includes(req.body.userId)){
+      await comment.updateOne({ $push: { likes: req.body.userId } });//like atarsa like sayısını arttırıyor
+      res.status(200).json("The post has been liked");
+    }
+    res.status(200).json({
+      success: true,
+      comment,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
+exports.Dislike = async (req, res) => {
+  try {
+    const comment = await Comment.findOne({ _id: req.params.id });
+    if(!comment.dislikes.includes(req.body.userId)){
+      await comment.updateOne({ $push: { dislikes: req.body.userId } });//like atarsa like sayısını arttırıyor
+      res.status(200).json("The post has been disliked");
+    }
     res.status(200).json({
       success: true,
       comment,
