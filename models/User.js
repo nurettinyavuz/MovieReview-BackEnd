@@ -27,7 +27,9 @@ const UserSchema = new Schema({
     type: String,
     enum: ['user', 'organization', 'admin'],
     default: 'user', //otomatik user olarak giriş yapıyor
-  }
+  },
+  likedMovies: [{ type: mongoose.Types.ObjectId, ref: 'Movie' }], // "like" yapılan filmleri tutar
+  dislikedMovies: [{ type: mongoose.Types.ObjectId, ref: 'Movie' }], // "dislike" yapılan filmleri tutar
 });
 
 UserSchema.pre('save', function (next) {

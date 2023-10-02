@@ -6,7 +6,7 @@ const Comment = require('../models/Comment');
 //Create Comment
 exports.CreateComment = async (req, res) => {
   try {
-    const { comment, user, rating } = req.body; 
+    const { comment, user, rating } = req.body;
 
     // Kullanıcıdan gelen yıldız değerini kontrol etmek
     if (rating < 1 || rating > 5) {
@@ -143,15 +143,9 @@ exports.getAllComments = async (req, res) => {
     const movieId = req.params.id;//hangi film veya dizi için yorumları çekeceğimizi belirler
     const movie = await movieSeries.findById(movieId).populate({
       path: 'comments',
-<<<<<<< HEAD
       options: { sort: { createdDate: -1 } }, // Yorumları yaratılma tarihine göre sırala
     });
         
-=======
-      options: { sort: { createdDate: -1 } }, // Yorumları yeniden eskiye doğru sırala
-    });//Yukarıda çekdiğimiz filmin id'sine ait bilgi ile populate yardımı ile comments'i  çektik 
-    
->>>>>>> 32bf56c24c028e003cc12e8b9006495aa056fa6c
     if (!movie) {
       return res.status(404).json({
         success: false,
@@ -192,40 +186,54 @@ exports.calculateAverageRating = async (req,res,filmId) => {
   }
 };
 
-//number of likes
+// Like işlemi
 exports.Like = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
-    if(!comment.likes.includes(req.body.userId)){
-      await comment.updateOne({ $push: { likes: req.body.userId } });//like atarsa like sayısını arttırıyor
+    const userId = req.body.userId;
+
+    // Kullanıcının daha önce bu filme like yapmadığını kontrol et
+    const user = await User.findById(userId);
+    if (!user.likedMovies.includes(comment.movieId)) {
+      // Like işlemini gerçekleştir
+      await comment.updateOne({ $push: { likes: userId } });
+
+      // Kullanıcının "likedMovies" listesine bu filmi ekleyin
+      await User.updateOne({ _id: userId }, { $push: { likedMovies: comment.movieId } });
+
       res.status(200).json("The post has been liked");
+    } else {
+      res.status(400).json("You have already liked this post.");
     }
-    res.status(200).json({
-      success: true,
-      comment,
-    });
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       status: 'fail',
       error: error.message,
     });
   }
 };
 
-//number of dislikes
+// Dislike işlemi
 exports.Dislike = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
-    if(!comment.dislikes.includes(req.body.userId)){
-      await comment.updateOne({ $push: { dislikes: req.body.userId } });//like atarsa like sayısını arttırıyor
+    const userId = req.body.userId;
+
+    // Kullanıcının daha önce bu filme dislike yapmadığını kontrol et
+    const user = await User.findById(userId);
+    if (!user.dislikedMovies.includes(comment.movieId)) {
+      // Dislike işlemini gerçekleştir
+      await comment.updateOne({ $push: { dislikes: userId } });
+
+      // Kullanıcının "dislikedMovies" listesine bu filmi ekleyin
+      await User.updateOne({ _id: userId }, { $push: { dislikedMovies: comment.movieId } });
+
       res.status(200).json("The post has been disliked");
+    } else {
+      res.status(400).json("You have already disliked this post.");
     }
-    res.status(200).json({
-      success: true,
-      comment,
-    });
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       status: 'fail',
       error: error.message,
     });
