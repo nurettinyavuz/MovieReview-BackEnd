@@ -14,7 +14,7 @@ const commentSchema = new Schema({
     ref: 'Film',
   },
   rating: {
-    type: Number,
+    type: Number, 
     min: 0,
     max: 5,
   },
