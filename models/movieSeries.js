@@ -13,7 +13,7 @@ const movieSeriesSchema = new Schema({
   },
   description: {
     type: String,
-    required: true,
+    required: true, 
   },
   time: {
     type: String,

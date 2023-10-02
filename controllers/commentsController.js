@@ -6,7 +6,7 @@ const Comment = require('../models/Comment');
 //Create Comment
 exports.CreateComment = async (req, res) => {
   try {
-    const { comment, user, rating } = req.body;
+    const { comment, user, rating } = req.body; 
 
     // Kullanıcıdan gelen yıldız değerini kontrol etmek
     if (rating < 1 || rating > 5) {
@@ -141,7 +141,10 @@ exports.getComment = async (req, res) => {
 exports.getAllComments = async (req, res) => {
   try {
     const movieId = req.params.id;//hangi film veya dizi için yorumları çekeceğimizi belirler
-    const movie = await movieSeries.findById(movieId).populate('comments').sort('-createdDate');;//Yukarıda çekdiğimiz filmin id'sine ait bilgi ile populate yardımı ile comments'i  çektik 
+    const movie = await movieSeries.findById(movieId).populate({
+      path: 'comments',
+      options: { sort: { createdDate: -1 } }, // Yorumları yeniden eskiye doğru sırala
+    });//Yukarıda çekdiğimiz filmin id'sine ait bilgi ile populate yardımı ile comments'i  çektik 
     
     if (!movie) {
       return res.status(404).json({
