@@ -1,6 +1,10 @@
 const bcrypt = require('bcrypt');
 const express = require('express');
 const User = require('../models/User');
+const Comment = require('../models/Comment');
+const movieSeries = require('../models/movieSeries');
+
+
 const jwt = require('jsonwebtoken');
 
 exports.createUser = async (req, res) => {
@@ -167,6 +171,34 @@ exports.getUser = async (req, res) => {
       user,
     });
     console.log(user);
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
+//All User 
+exports.getAllUser = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const userComment = await Comment.findById(userId).populate({
+      path: 'user',
+      options: { sort: { createdDate: -1 } }, // Yorumları yaratılma tarihine göre sırala
+    });
+
+    if (!userComment) {
+      return res.status(404).json({
+        success: false,
+        message: 'Bu kişiye ait yorum bulunamadı',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      comments: userComment,
+    });
   } catch (error) {
     res.status(400).json({
       status: 'fail',

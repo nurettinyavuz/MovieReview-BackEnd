@@ -7,6 +7,7 @@ const router = express.Router();
 
 
 router.route('/:id').get(authController.getUser);
+router.route('/AllUsers').get(authController.getAllUser);
 router.route('/register').post(authController.createUser);//http://localhost:5000/users/register
 router.route('/login').post(authController.loginUser);//http://localhost:5000/users/login
 router.route('/logout').post(authController.logoutUser);//http://localhost:5000/users/logout

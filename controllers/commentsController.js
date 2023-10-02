@@ -137,12 +137,15 @@ exports.getComment = async (req, res) => {
   }
 };
 
-//All Comment
+//All Comment (Filme gelen yorumların ID'lerini buluyor)
 exports.getAllComments = async (req, res) => {
   try {
     const movieId = req.params.id;//hangi film veya dizi için yorumları çekeceğimizi belirler
-    const movie = await movieSeries.findById(movieId).populate('comments').sort('-createdDate');;//Yukarıda çekdiğimiz filmin id'sine ait bilgi ile populate yardımı ile comments'i  çektik 
-    
+    const movie = await movieSeries.findById(movieId).populate({
+      path: 'comments',
+      options: { sort: { createdDate: -1 } }, // Yorumları yaratılma tarihine göre sırala
+    });
+        
     if (!movie) {
       return res.status(404).json({
         success: false,
@@ -183,7 +186,7 @@ exports.calculateAverageRating = async (req,res,filmId) => {
   }
 };
 
-
+//number of likes
 exports.Like = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
@@ -203,6 +206,7 @@ exports.Like = async (req, res) => {
   }
 };
 
+//number of dislikes
 exports.Dislike = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
