@@ -2,6 +2,8 @@ const bcrypt = require('bcrypt');
 const express = require('express');
 const movieSeries = require('../models/movieSeries');
 const Comment = require('../models/Comment');
+const User = require('../models/User');
+
 
 //Create Comment
 exports.CreateComment = async (req, res) => {
@@ -57,10 +59,16 @@ exports.CreateComment = async (req, res) => {
 // Delete Comment
 exports.deleteComment = async (req, res) => {
   try {
-    const commentId = req.params.commentId; // Silinecek yorumun ID'sini al
+
+    // Silinecek yorumun ID'sini al
+    const commentId = req.params.commentId; 
 
     // Yorumu veritabanından bul
     const comment = await Comment.findById(commentId);
+
+    // Yorumu veritabanından sil
+    await Comment.findByIdAndDelete(commentId);
+
     if (!comment) {
       return res.status(404).json({
         status: 'fail',
@@ -68,12 +76,11 @@ exports.deleteComment = async (req, res) => {
       });
     }
 
-    // Yorumu veritabanından sil
-    await Comment.findByIdAndDelete(commentId);
-
     // Yorumun bağlı olduğu film serisinden kaldır
     const movieseries = await movieSeries.findOne({ comments: commentId });
     if (movieseries) {
+      //Önce CommentId'yi (yani silinecek veriyi) Veritabanında filmlerin içindeki array'dan kaldırıyoruz 
+      //sonradan da kaldırılmış halini kayıt ediyoruz
       movieseries.comments.pull(commentId);
       await movieseries.save();
     }
@@ -190,10 +197,14 @@ exports.calculateAverageRating = async (req,res,filmId) => {
 exports.Like = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
-    const userId = req.body.userId;
+    const userId = req.user.id;
 
-    // Kullanıcının daha önce bu filme like yapmadığını kontrol et
     const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json("User not found");
+    }    
+    
+    // Kullanıcının daha önce bu filme like yapmadığını kontrol et
     if (!user.likedMovies.includes(comment.movieId)) {
       // Like işlemini gerçekleştir
       await comment.updateOne({ $push: { likes: userId } });
@@ -235,7 +246,7 @@ exports.Dislike = async (req, res) => {
   } catch (error) {
     res.status(500).json({
       status: 'fail',
-      error: error.message,
+      error: error.message, 
     });
   }
 };

@@ -25,11 +25,31 @@ const UserSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['user', 'organization', 'admin'],
+    enum: ['user','admin'],
     default: 'user', //otomatik user olarak giriş yapıyor
   },
-  likedMovies: [{ type: mongoose.Types.ObjectId, ref: 'Movie' }], // "like" yapılan filmleri tutar
-  dislikedMovies: [{ type: mongoose.Types.ObjectId, ref: 'Movie' }], // "dislike" yapılan filmleri tutar
+  skillRank: {
+    type: String,
+    enum: ['Acemi','Amatör','Tecrübesiz','Yeni Başlayan','Orta Seviye','Deneyim Kazanmış','Yetenekli','İleri Düzey','Usta','Profesyonel'],
+    default: 'Acemi', //otomatik user olarak giriş yapıyor
+  },
+  userScore: {
+    type: Number,
+    default: 0, // Başlangıç puanı, isteğe bağlı olarak 0 veya başka bir değer olabilir.
+  },
+  
+// "like" yapılan filmleri tutar
+  likedMovies: [{ 
+    type: mongoose.Types.ObjectId, 
+    ref: 'Movie' 
+  }], 
+  
+// "dislike" yapılan filmleri tutar
+  dislikedMovies: [{
+    type: mongoose.Types.ObjectId, 
+    ref: 'Movie' 
+  }], 
+
 });
 
 UserSchema.pre('save', function (next) {
