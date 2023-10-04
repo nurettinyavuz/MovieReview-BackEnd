@@ -4,7 +4,6 @@ const User = require('../models/User');
 const Comment = require('../models/Comment');
 const movieSeries = require('../models/movieSeries');
 
-
 const jwt = require('jsonwebtoken');
 
 exports.createUser = async (req, res) => {
@@ -63,6 +62,40 @@ exports.createUser = async (req, res) => {
   }
 };
 
+let refreshTokens = [];
+
+exports.refreshToken = async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    if (!refreshToken) return res.status(401).json({ error: 'refreshToken eksik' });
+
+    // refreshTokens dizisini kontrol edin
+    if (!refreshTokens.includes(refreshToken)) {
+      return res.status(401).json({ error: 'Geçersiz refreshToken' });
+    }
+
+    jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, data) => {
+      if (err) {
+        console.log(err);
+        return res.status(400).json(err);
+      }
+
+      const accessToken = jwt.sign(
+        { userId: data.userId, email: data.email },
+        process.env.JWT_SECRET,
+        { expiresIn: '15m' }
+      );
+
+      return res.status(200).json({ accessToken });
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error,
+    });
+  }
+};
+
 exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -77,7 +110,7 @@ exports.loginUser = async (req, res) => {
 
     const same = await bcrypt.compare(password, user.password);
 
-    if (!same){
+    if (!same) {
       return res.status(400).json({
         status: 'fail',
         error: 'Girdiginiz şifre yanlis',
@@ -92,8 +125,11 @@ exports.loginUser = async (req, res) => {
 
     const refreshToken = jwt.sign(
       { userId: user._id, email: user.email },
-      process.env.REFRESH_TOKEN_SECRET,//süre belirlemedim sonsuz süre olacak
+      process.env.REFRESH_TOKEN_SECRET // süre belirlemedim sonsuz süre olacak
     );
+
+    // refreshTokens dizisine refreshToken'i ekleyin
+    refreshTokens.push(refreshToken);
 
     // Erişim belirtecini Postman'de "Cookie" başlığına eklemek için aşağıdaki kodu kullanın.
     res.setHeader('Set-Cookie', `accessToken=${accessToken}; Path=/`);
@@ -104,8 +140,6 @@ exports.loginUser = async (req, res) => {
       accessToken,
       refreshToken,
     });
-
-
   } catch (error) {
     res.status(400).json({
       status: 'fail',
@@ -113,6 +147,7 @@ exports.loginUser = async (req, res) => {
     });
   }
 };
+
 
 exports.logoutUser = async (req, res) => {
   try {
@@ -128,7 +163,7 @@ exports.logoutUser = async (req, res) => {
 
     const same = await bcrypt.compare(password, user.password);
 
-    if (!same){
+    if (!same) {
       res.status(400).json({
         status: 'fail',
         error: 'Girdiginiz şifre yanlis',
@@ -143,16 +178,15 @@ exports.logoutUser = async (req, res) => {
 
     const refreshToken = jwt.sign(
       { userId: user._id, email: user.email },
-      process.env.REFRESH_TOKEN_SECRET,//süre belirlemedim sonsuz süre olacak
+      process.env.REFRESH_TOKEN_SECRET //süre belirlemedim sonsuz süre olacak
     );
-    
+
     res.status(200).json({
       success: true,
       user,
       accessToken,
       refreshToken,
     });
-
   } catch (error) {
     res.status(400).json({
       status: 'fail',
@@ -179,7 +213,7 @@ exports.getUser = async (req, res) => {
   }
 };
 
-//All User 
+//All User
 exports.getAllUser = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -211,7 +245,6 @@ exports.userLevel = async (req, res) => {
   try {
     res.status(200).json({
       success: true,
-      
     });
   } catch (error) {
     res.status(400).json({
