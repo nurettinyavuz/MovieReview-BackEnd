@@ -148,7 +148,6 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-
 exports.logoutUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -189,6 +188,39 @@ exports.logoutUser = async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({
+      status: 'fail',
+      error,
+    });
+  }
+};
+
+//Delete User
+exports.deleteUser = async (req, res) => {
+  try {
+    const userId = req.params.id; // Kullanıcı Id'si alındı
+    console.log(userId);
+
+    // Kullanıcıyı veritabanından bulun
+    const user = await User.findById(userId);
+
+    // Kullanıcı mevcut değilse hata döndürün
+    if (!user) {
+      return res.status(404).json({
+        status: 'fail',
+        message: 'Kullanıcı bulunamadı.',
+      });
+    }
+
+    // Kullanıcıyı veritabanından silin
+    await user.deleteOne();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Kullanıcı başarıyla silindi.',
+    });
+  } catch (error) {
+    console.error("Hata:", error); // Hata mesajını daha ayrıntılı olarak yazdırın
+    res.status(500).json({
       status: 'fail',
       error,
     });
