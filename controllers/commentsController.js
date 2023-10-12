@@ -172,7 +172,6 @@ exports.getAllComments = async (req, res) => {
   }
 };
 
-
 exports.calculateAverageRating = async (req,res,filmId) => {
   try {
     const comments = await Comment.find({ film: filmId });
@@ -197,24 +196,24 @@ exports.calculateAverageRating = async (req,res,filmId) => {
 exports.Like = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
-    const userId = req.user.id;
+    const userId = req.user.userId; // JWT'den çıkartılan user id
 
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json("User not found");
-    }    
-    
-    // Kullanıcının daha önce bu filme like yapmadığını kontrol et
-    if (!user.likedMovies.includes(comment.movieId)) {
+    }
+
+    // Kullanıcının daha önce bu yorumu beğenmediğini ve bu yorumu daha önce beğenmediyse
+    if (!user.likedComments.includes(comment._id)) {
       // Like işlemini gerçekleştir
-      await comment.updateOne({ $push: { likes: userId } });
+      await comment.updateOne({ $addToSet: { likes: userId } });
 
-      // Kullanıcının "likedMovies" listesine bu filmi ekleyin
-      await User.updateOne({ _id: userId }, { $push: { likedMovies: comment.movieId } });
+      // Kullanıcının "likedComments" listesine bu yorumu ekleyin
+      await User.updateOne({ _id: userId }, { $addToSet: { likedComments: comment._id } });
 
-      res.status(200).json("The post has been liked");
+      res.status(200).json("The comment has been liked");
     } else {
-      res.status(400).json("You have already liked this post.");
+      res.status(400).json("You have already liked this comment");
     }
   } catch (error) {
     res.status(500).json({
@@ -224,29 +223,36 @@ exports.Like = async (req, res) => {
   }
 };
 
+
 // Dislike işlemi
 exports.Dislike = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
-    const userId = req.body.userId;
+    
+    // authenticateToken middleware'i kullanıcı bilgilerini req.user'a ekledi.
+    const userId = req.user.userId; // JWT'den çıkartılan user id
 
-    // Kullanıcının daha önce bu filme dislike yapmadığını kontrol et
     const user = await User.findById(userId);
-    if (!user.dislikedMovies.includes(comment.movieId)) {
+    if (!user) {
+      return res.status(404).json("User not found");
+    }
+    
+    // Kullanıcının daha önce bu yorumu beğenmediğini ve bu yorumu daha önce beğenmediyse
+    if (!user.dislikedComments.includes(comment._id)) {
       // Dislike işlemini gerçekleştir
-      await comment.updateOne({ $push: { dislikes: userId } });
+      await comment.updateOne({ $addToSet: { dislikes: userId } });
 
-      // Kullanıcının "dislikedMovies" listesine bu filmi ekleyin
-      await User.updateOne({ _id: userId }, { $push: { dislikedMovies: comment.movieId } });
+      // Kullanıcının "dislikedComments" listesine bu yorumu ekleyin
+      await User.updateOne({ _id: userId }, { $addToSet: { dislikedComments: comment._id } });
 
-      res.status(200).json("The post has been disliked");
+      res.status(200).json("The comment has been disliked");
     } else {
-      res.status(400).json("You have already disliked this post.");
+      res.status(400).json("You have already disliked this comment");
     }
   } catch (error) {
     res.status(500).json({
       status: 'fail',
-      error: error.message, 
+      error: error.message,
     });
   }
 };

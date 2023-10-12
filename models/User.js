@@ -18,7 +18,7 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-  },
+  }, 
   password: {
     type: String,
     required: true,
@@ -39,13 +39,13 @@ const UserSchema = new Schema({
   },
   
 // "like" yapılan filmleri tutar
-  likedMovies: [{ 
+  likedComments: [{ 
     type: mongoose.Types.ObjectId, 
     ref: 'Movie' 
   }], 
   
 // "dislike" yapılan filmleri tutar
-  dislikedMovies: [{
+  dislikedComments: [{
     type: mongoose.Types.ObjectId, 
     ref: 'Movie' 
   }], 

@@ -121,7 +121,7 @@ exports.loginUser = async (req, res) => {
     const accessToken = jwt.sign(
       { userId: user._id, email: user.email },
       process.env.JWT_SECRET,
-      { expiresIn: '15m' }
+      { expiresIn: '1m' }
     );
 
     const refreshToken = jwt.sign(
@@ -199,7 +199,7 @@ exports.logoutUser = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const userId = req.params.id; // Kullanıcı Id'si alındı
-    console.log(userId);
+    console.log("This user is deleted now"+userId);
 
     // Kullanıcıyı veritabanından bulun
     const user = await User.findById(userId);
