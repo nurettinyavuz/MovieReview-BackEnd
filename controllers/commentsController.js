@@ -36,6 +36,8 @@ exports.CreateComment = async (req, res) => {
     }
 
     // Mevcut yorumları alıp yeni yorumun ObjectId'sini eklemek
+    //Bu kısım MovieSeries modelinin içindeki comments'e eklemek için
+
     if (Array.isArray(movieseries.comments)) {
       // Dizi olup olmadığını kontrol eder
       movieseries.comments.push(createComment._id); // Dizi ise dizinin sonuna ekler
@@ -47,6 +49,7 @@ exports.CreateComment = async (req, res) => {
     await movieseries.save();
 
     // Kullanıcı modelini güncelleyin ve yorumun ObjectId'sini ekleyin
+    //Bu kısım User modelinin içindeki comments'e eklemek için
     const user = await User.findById(userId);
     if (Array.isArray(user.comments)) {
       user.comments.push(createComment._id);
