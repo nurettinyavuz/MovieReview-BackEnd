@@ -18,7 +18,7 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-  }, 
+  },  
   password: {
     type: String,
     required: true,
@@ -37,6 +37,12 @@ const UserSchema = new Schema({
     type: Number,
     default: 0, // Başlangıç puanı, isteğe bağlı olarak 0 veya başka bir değer olabilir.
   },
+
+//"comments" kullanıcının yaptığı yorumları tutar  
+  comments: [{ 
+    type: mongoose.Types.ObjectId, 
+    ref: 'Comment' 
+  }], 
   
 // "like" yapılan filmleri tutar
   likedComments: [{ 

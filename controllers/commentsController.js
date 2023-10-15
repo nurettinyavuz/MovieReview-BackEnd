@@ -8,7 +8,10 @@ const User = require('../models/User');
 //Create Comment
 exports.CreateComment = async (req, res) => {
   try {
-    const { comment, user, rating } = req.body;
+    // Kullanıcının kimliğini authorizationToken'dan alın
+    const userId = req.user.userId;
+
+    const { comment, rating } = req.body;
 
     // Kullanıcıdan gelen yıldız değerini kontrol etmek
     if (rating < 1 || rating > 5) {
@@ -20,11 +23,11 @@ exports.CreateComment = async (req, res) => {
 
     const createComment = await Comment.create({
       comment: comment,
-      createdBy: user,
-      rating:rating,
+      createdBy: userId, // Kullanıcı kimliğini yorumla ilişkilendirin
+      rating: rating,
     });
 
-    const movieseries = await movieSeries.findOne({ _id: req.params.id }); 
+    const movieseries = await movieSeries.findOne({ _id: req.params.id });
     if (!movieseries) {
       return res.status(404).json({
         status: 'fail',
@@ -34,14 +37,23 @@ exports.CreateComment = async (req, res) => {
 
     // Mevcut yorumları alıp yeni yorumun ObjectId'sini eklemek
     if (Array.isArray(movieseries.comments)) {
-      //Dizi olup olmadığını kontrol eder
-      movieseries.comments.push(createComment._id); //Dizi ise dizinin sonuna ekler
+      // Dizi olup olmadığını kontrol eder
+      movieseries.comments.push(createComment._id); // Dizi ise dizinin sonuna ekler
     } else {
-      //bir dizi değilse (yani daha önce hiç yorum eklenmemişse)
+      // Bir dizi değilse (yani daha önce hiç yorum eklenmemişse)
       movieseries.comments = [createComment._id];
     }
 
     await movieseries.save();
+
+    // Kullanıcı modelini güncelleyin ve yorumun ObjectId'sini ekleyin
+    const user = await User.findById(userId);
+    if (Array.isArray(user.comments)) {
+      user.comments.push(createComment._id);
+    } else {
+      user.comments = [createComment._id];
+    }
+    await user.save();
 
     res.status(201).json({
       success: true,
@@ -222,7 +234,6 @@ exports.Like = async (req, res) => {
     });
   }
 };
-
 
 // Dislike işlemi
 exports.Dislike = async (req, res) => {

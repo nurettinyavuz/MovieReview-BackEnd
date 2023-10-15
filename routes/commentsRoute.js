@@ -1,10 +1,10 @@
 const express = require('express');
-const commentsController = require('../controllers/commentsController');
 const authMiddleware = require('../Middlewares/authMiddleware')
+const commentsController = require('../controllers/commentsController');
 
 const router = express.Router();
 
-router.route('/:id/CreateComment').post(commentsController.CreateComment); //http://localhost:5000/comments/:id/comments
+router.route('/:id/CreateComment').post(authMiddleware.authenticateToken,commentsController.CreateComment); //http://localhost:5000/comments/:id/CreateComment
 router.route('/:id/deleteComment/:commentId').delete(commentsController.deleteComment);//http://localhost:5000/comments/:id/deleteComment/:commentId
 router.route('/:id/updateComment/:commentId').put(commentsController.updateComment);//http://localhost:5000/comments/:id/updateComment/:commentId
 router.route('/:id').get(commentsController.getComment); //http://localhost:5000/comments/:id (Yorum id)
@@ -13,5 +13,5 @@ router.route('/:id/averagerating').get(commentsController.calculateAverageRating
 router.route('/:id/Like').put(authMiddleware.authenticateToken, commentsController.Like); //http://localhost:5000/comments/:id/Like (Yorum id)
 router.route('/:id/Dislike').put(authMiddleware.authenticateToken,commentsController.Dislike); //http://localhost:5000/comments/:id/Dislike (Yorum id)
 
-
+ 
 module.exports = router;
