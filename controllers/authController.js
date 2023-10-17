@@ -149,51 +149,33 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-exports.logoutUser = async (req, res) => {
+//Logout User
+exports.logoutUser = (req, res) => {
   try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    // Kullanıcının mevcut erişim belirtecini alın
+    const accessToken = req.cookies.accessToken;
 
-    if (!user) {
-      return res.status(400).json({
+    if (accessToken) {
+      res.clearCookie('accessToken');
+
+      res.status(200).json({
+        success: true,
+        message: 'Çıkış başarılı.',
+      });
+    } else {
+      res.status(401).json({
         status: 'fail',
-        error: 'Kayitli kullanici bulunamadi',
+        error: 'Oturum açmış bir kullanıcı yok.',
       });
     }
-
-    const same = await bcrypt.compare(password, user.password);
-
-    if (!same) {
-      res.status(400).json({
-        status: 'fail',
-        error: 'Girdiginiz şifre yanlis',
-      });
-    }
-
-    const accessToken = jwt.sign(
-      { userId: user._id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: '2m' }
-    );
-
-    const refreshToken = jwt.sign(
-      { userId: user._id, email: user.email },
-      process.env.REFRESH_TOKEN_SECRET //süre belirlemedim sonsuz süre olacak
-    );
-
-    res.status(200).json({
-      success: true,
-      user,
-      accessToken,
-      refreshToken,
-    });
   } catch (error) {
-    res.status(400).json({
+    res.status(500).json({
       status: 'fail',
-      error,
+      error: 'Çıkış işlemi sırasında bir hata oluştu.',
     });
   }
 };
+
 
 //Delete User
 exports.deleteUser = async (req, res) => {
