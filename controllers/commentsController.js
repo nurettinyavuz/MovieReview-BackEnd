@@ -10,6 +10,10 @@ exports.CreateComment = async (req, res) => {
     // Kullanıcının kimliğini authorizationToken'dan alın
     const userId = req.user.userId;
 
+    // Kullanıcının adını da alın
+    const user = await User.findById(userId);
+    const userName = user.UserName;//modelde ki user'dan çektim ismi
+
     const { comment, rating } = req.body;
 
     // Kullanıcıdan gelen yıldız değerini kontrol etmek
@@ -22,9 +26,11 @@ exports.CreateComment = async (req, res) => {
 
     const createComment = await Comment.create({
       comment: comment,
-      user: userId, // Yorumun kimin tarafından yapıldığını belirtin
+      createdUserId: userId, // Yorumun kimin tarafından yapıldığını belirtin
+      userName: userName, // Yorumu yapan kullanıcının adını ekleyin
       rating: rating,
     });
+    console.log(userName);
 
     const movieseries = await movieSeries.findOne({ _id: req.params.id });
     if (!movieseries) {
@@ -40,10 +46,10 @@ exports.CreateComment = async (req, res) => {
     } else {
       movieseries.comments = [createComment._id];
     }
+
     await movieseries.save();
 
     // Kullanıcı modelini güncelleyin ve yorumun ObjectId'sini ekleyin
-    const user = await User.findById(userId);
     if (Array.isArray(user.comments)) {
       user.comments.push(createComment._id);
     } else {
@@ -63,6 +69,7 @@ exports.CreateComment = async (req, res) => {
     });
   }
 };
+
 
 // Delete Comment
 exports.deleteComment = async (req, res) => {
