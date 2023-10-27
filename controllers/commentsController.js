@@ -5,7 +5,6 @@ const Comment = require('../models/Comment');
 const User = require('../models/User');
 
 
-//Create Comment
 exports.CreateComment = async (req, res) => {
   try {
     // Kullanıcının kimliğini authorizationToken'dan alın
@@ -23,7 +22,7 @@ exports.CreateComment = async (req, res) => {
 
     const createComment = await Comment.create({
       comment: comment,
-      createdBy: userId, // Kullanıcı kimliğini yorumla ilişkilendirin
+      user: userId, // Yorumun kimin tarafından yapıldığını belirtin
       rating: rating,
     });
 
@@ -36,20 +35,15 @@ exports.CreateComment = async (req, res) => {
     }
 
     // Mevcut yorumları alıp yeni yorumun ObjectId'sini eklemek
-    //Bu kısım MovieSeries modelinin içindeki comments'e eklemek için
-
     if (Array.isArray(movieseries.comments)) {
-      // Dizi olup olmadığını kontrol eder
-      movieseries.comments.push(createComment._id); // Dizi ise dizinin sonuna ekler
+      movieseries.comments.push(createComment._id);
     } else {
-      // Bir dizi değilse (yani daha önce hiç yorum eklenmemişse)
       movieseries.comments = [createComment._id];
     }
 
     await movieseries.save();
 
     // Kullanıcı modelini güncelleyin ve yorumun ObjectId'sini ekleyin
-    //Bu kısım User modelinin içindeki comments'e eklemek için
     const user = await User.findById(userId);
     if (Array.isArray(user.comments)) {
       user.comments.push(createComment._id);
@@ -70,6 +64,7 @@ exports.CreateComment = async (req, res) => {
     });
   }
 };
+
 
 // Delete Comment
 exports.deleteComment = async (req, res) => {

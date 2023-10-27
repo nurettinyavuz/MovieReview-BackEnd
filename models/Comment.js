@@ -3,18 +3,18 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const commentSchema = new Schema({
-  user: [{
-    //Yorumların hangi kullanıcıya ait olduğunu belirlemek için referans kullandım
+  // Yorumun hangi kullanıcıya ait olduğunu belirlemek için User modeline referans
+  createdUserId: {
     type: Schema.Types.ObjectId,
-    ref: 'User',
-  }],
+    ref: 'User', 
+  },
   film: {
     //Yorumların hangi filme ait olduğunu belirlemek için referans kullandım
     type: Schema.Types.ObjectId,
     ref: 'Film',
   },
   rating: {
-    type: Number, 
+    type: Number,
     min: 0,
     max: 5,
   },
@@ -22,8 +22,8 @@ const commentSchema = new Schema({
     type: String,
   },
   createdDate: {
-    type:Date,
-    default:Date.now
+    type: Date,
+    default: Date.now,
   },
   likes: {
     type: Array,
