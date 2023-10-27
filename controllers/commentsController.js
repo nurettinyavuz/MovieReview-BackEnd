@@ -40,7 +40,6 @@ exports.CreateComment = async (req, res) => {
     } else {
       movieseries.comments = [createComment._id];
     }
-
     await movieseries.save();
 
     // Kullanıcı modelini güncelleyin ve yorumun ObjectId'sini ekleyin
@@ -64,7 +63,6 @@ exports.CreateComment = async (req, res) => {
     });
   }
 };
-
 
 // Delete Comment
 exports.deleteComment = async (req, res) => {

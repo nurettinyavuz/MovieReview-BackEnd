@@ -60,11 +60,34 @@ const UserSchema = new Schema({
 
 UserSchema.pre('save', function (next) {
   const user = this;
+  if (!user.isModified('password')) {
+    return next(); // Şifre değiştirilmediyse devam et
+  }
+
   bcrypt.hash(user.password, 10, (error, hash) => {
+    if (error) {
+      return next(error);
+    }
     user.password = hash;
     next();
   });
 });
+
+UserSchema.pre('findOneAndUpdate', function (next) {
+  const update = this.getUpdate();
+  if (!update || !update.password) {
+    return next();
+  }
+
+  bcrypt.hash(update.password, 10, (error, hash) => {
+    if (error) {
+      return next(error);
+    }
+    update.password = hash;
+    next();
+  });
+});
+
 
 
 const User = mongoose.model('User', UserSchema);

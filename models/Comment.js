@@ -8,6 +8,10 @@ const commentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'User', 
   },
+  userName: {
+    type: String, // Yorum yapan kullanıcının adını burada saklayın
+    ref: 'User', 
+  },
   film: {
     //Yorumların hangi filme ait olduğunu belirlemek için referans kullandım
     type: Schema.Types.ObjectId,
