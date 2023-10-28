@@ -12,11 +12,11 @@ const commentSchema = new Schema({
     type: String, // Yorum yapan kullanıcının adını burada saklayın
     ref: 'User', 
   },
-  film: {
-    //Yorumların hangi filme ait olduğunu belirlemek için referans kullandım
+  movieSeriesId: {
     type: Schema.Types.ObjectId,
-    ref: 'Film',
-  },
+    ref: 'movieSeries',
+    required: true,
+  },  
   rating: {
     type: Number,
     min: 0,

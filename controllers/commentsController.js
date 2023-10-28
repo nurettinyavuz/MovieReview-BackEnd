@@ -9,6 +9,7 @@ exports.CreateComment = async (req, res) => {
   try {
     // Kullanıcının kimliğini authorizationToken'dan alın
     const userId = req.user.userId;
+    const movieSeriesId = req.body.movieSeriesId;
 
     // Kullanıcının adını da alın
     const user = await User.findById(userId);
@@ -28,9 +29,12 @@ exports.CreateComment = async (req, res) => {
       comment: comment,
       createdUserId: userId, // Yorumun kimin tarafından yapıldığını belirtin
       userName: userName, // Yorumu yapan kullanıcının adını ekleyin
+      movieSeriesId:movieSeriesId,
       rating: rating,
     });
     console.log(userName);
+   // console.log(filmId);
+
 
     const movieseries = await movieSeries.findOne({ _id: req.params.id });
     if (!movieseries) {
