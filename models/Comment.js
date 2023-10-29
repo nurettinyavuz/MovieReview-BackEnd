@@ -15,7 +15,6 @@ const commentSchema = new Schema({
   movieSeriesId: {
     type: Schema.Types.ObjectId,
     ref: 'movieSeries',
-    required: true,
   },  
   rating: {
     type: Number,

@@ -8,12 +8,27 @@ const User = require('../models/User');
 exports.CreateComment = async (req, res) => {
   try {
     // Kullanıcının kimliğini authorizationToken'dan alın
-    const userId = req.user.userId;
-    const movieSeriesId = req.body.movieSeriesId;
+    const userId = req.user.userId;    
+    const movieSeriesId = req.params.movieSeriesId;
 
     // Kullanıcının adını da alın
     const user = await User.findById(userId);
-    const userName = user.UserName;//modelde ki user'dan çektim ismi
+    const userName = user.UserName; // modeldeki kullanıcının adını çekin
+    if (!user) {
+      return res.status(404).json({
+        status: 'fail',
+        error: 'Kullanıcı bulunamadı',
+      });
+    }
+    
+    const movieseries = await movieSeries.findById(movieSeriesId);;
+    if (!movieseries) {
+      return res.status(404).json({
+        status: 'fail',
+        error: 'Belirtilen film serisi bulunamadı.',
+      });
+    }
+
 
     const { comment, rating } = req.body;
 
@@ -21,28 +36,21 @@ exports.CreateComment = async (req, res) => {
     if (rating < 1 || rating > 5) {
       return res.status(400).json({
         status: 'fail',
-        error: 'Star value must be between 1 and 5.',
+        error: 'Yıldız değeri 1 ile 5 arasında olmalıdır.',
       });
     }
+
 
     const createComment = await Comment.create({
       comment: comment,
       createdUserId: userId, // Yorumun kimin tarafından yapıldığını belirtin
       userName: userName, // Yorumu yapan kullanıcının adını ekleyin
-      movieSeriesId:movieSeriesId,
+      movieSeriesId: movieSeriesId,
       rating: rating,
     });
     console.log(userName);
    // console.log(filmId);
 
-
-    const movieseries = await movieSeries.findOne({ _id: req.params.id });
-    if (!movieseries) {
-      return res.status(404).json({
-        status: 'fail',
-        error: 'Film series not found.',
-      });
-    }
 
     // Mevcut yorumları alıp yeni yorumun ObjectId'sini eklemek
     if (Array.isArray(movieseries.comments)) {
@@ -50,7 +58,6 @@ exports.CreateComment = async (req, res) => {
     } else {
       movieseries.comments = [createComment._id];
     }
-
     await movieseries.save();
 
     // Kullanıcı modelini güncelleyin ve yorumun ObjectId'sini ekleyin
