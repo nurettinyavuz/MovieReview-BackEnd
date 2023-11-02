@@ -21,7 +21,8 @@ exports.CreateComment = async (req, res) => {
       });
     }
     
-    const movieseries = await movieSeries.findById(movieSeriesId);;
+    const movieseries = await movieSeries.findById(movieSeriesId);//movieseries tüm yorumları çeker
+    console.log(movieseries);
     if (!movieseries) {
       return res.status(404).json({
         status: 'fail',
@@ -29,6 +30,7 @@ exports.CreateComment = async (req, res) => {
       });
     }
 
+    const movieSeriesName = movieseries.name;
 
     const { comment, rating } = req.body;
 
@@ -46,6 +48,7 @@ exports.CreateComment = async (req, res) => {
       createdUserId: userId, // Yorumun kimin tarafından yapıldığını belirtin
       userName: userName, // Yorumu yapan kullanıcının adını ekleyin
       movieSeriesId: movieSeriesId,
+      movieSeriesName:movieSeriesName,
       rating: rating,
     });
     console.log(userName);

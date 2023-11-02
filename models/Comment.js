@@ -16,6 +16,10 @@ const commentSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'movieSeries',
   },  
+  movieSeriesName: {
+    type: String,
+    ref: 'movieSeries',
+  },  
   rating: {
     type: Number,
     min: 0,
