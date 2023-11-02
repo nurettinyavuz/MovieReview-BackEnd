@@ -153,12 +153,44 @@ exports.updateComment = async (req, res) => {
   }
 };
 
+//Get User's Comment
+exports.getUserComment = async(req,res)=>{
+  try {
+    const user = await User.findOne({_id:req.params.id});//URL'de ki user'ı çektik
+    const comments = user.comments;//User'ın içindeki comments'i çektik
+
+    if(!user._id){
+      return res.status(404).json({
+        status:false,
+        message:'Böyle bir kullanıcı yok'
+      })
+    }
+    if(!comments){
+      return res.status(404).json({
+        status:false,
+        message:'Kullanıcıya ait yorum bulunamadı'
+      })
+    }
+
+    res.status(200).json({
+      status: true,
+      comments: user.comments,
+    });
+
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
 //Get Comment
 exports.getComment = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
     res.status(200).json({
-      success: true,
+      status: true,
       comment,
     });
   } catch (error) {
