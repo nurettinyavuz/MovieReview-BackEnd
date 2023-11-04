@@ -14,6 +14,10 @@ const movieSeriesSchema = new Schema({
   description: {
     type: String,
     required: true, 
+  },  
+  rating: {
+    type: String,
+    ref: 'Comment', 
   },
   time: {
     type: String,
