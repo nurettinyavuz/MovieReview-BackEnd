@@ -67,7 +67,7 @@ mongoose
 
     const port = 5000;
     app.listen(port, () => {
-      console.log(`Sunucu ${port} portunda başlatıldı...`);
+      console.log(`App startted on port ${port}`);
     });
   })
   .catch((error) => {

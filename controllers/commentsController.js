@@ -160,6 +160,7 @@ exports.updateComment = async (req, res) => {
 exports.getUserComment = async (req, res) => {
   try {
     const user = await User.findOne({ _id: req.params.id }); //URL'de ki user'ı çektik
+    console.log(user);
     const comments = user.comments; //User'ın içindeki comments'i çektik
 
     if (!user._id) {
