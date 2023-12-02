@@ -5,7 +5,7 @@ const commentsController = require('../controllers/commentsController');
 const router = express.Router();
 
 router.route('/:movieSeriesId/CreateComment').post(authMiddleware.authenticateToken,commentsController.CreateComment); //http://localhost:5000/comments/:id/CreateComment (Filmin id)
-router.route('/:id/deleteComment/:commentId').delete(commentsController.deleteComment);//http://localhost:5000/comments/:id/deleteComment/:commentId
+router.route('/:id/deleteComment/:commentId').delete(authMiddleware.authenticateToken,commentsController.deleteComment);//http://localhost:5000/comments/:id/deleteComment/:commentId
 router.route('/:id/updateComment/:commentId').put(commentsController.updateComment);//http://localhost:5000/comments/:id/updateComment/:commentId
 router.route('/:id').get(commentsController.getComment); //http://localhost:5000/comments/:id (Yorum id)
 router.route('/:id/user').get(commentsController.getUserComment); //http://localhost:5000/comments/:id/user (UserID)
