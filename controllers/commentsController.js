@@ -84,9 +84,10 @@ exports.CreateComment = async (req, res) => {
 // Delete Comment
 exports.deleteComment = async (req, res) => {
   try {
+    
     // Silinecek yorumun ID'sini al
     const commentId = req.params.commentId;
-
+     
     // Yorumu veritabanından bul
     const comment = await Comment.findById(commentId);
 
@@ -99,7 +100,6 @@ exports.deleteComment = async (req, res) => {
         error: 'Comment not found.',
       });
     }
-
     // Yorumun bağlı olduğu film serisinden kaldır
     const movieseries = await movieSeries.findOne({ comments: commentId });
     if (movieseries) {
@@ -107,6 +107,18 @@ exports.deleteComment = async (req, res) => {
       //sonradan da kaldırılmış halini kayıt ediyoruz
       movieseries.comments.pull(commentId);
       await movieseries.save();
+    }
+
+    // Kullanıcının modelini bul
+    const user = await User.findById(comment.createdUserId);
+
+    if (user) {
+      // Kullanıcının comments dizisinden silinen yorumun ID'sini kaldır
+      user.comments = user.comments.filter(
+        (userCommentId) => userCommentId.toString() !== commentId.toString()
+      );
+      // Kullanıcı modelini güncelle
+      await user.save();
     }
 
     res.status(200).json({
@@ -275,10 +287,8 @@ exports.calculateAverageRating = async (req, res) => {
 
 exports.TopTenMovie = async (req, res) => {
   try {
-    const topRatedMovies = await movieSeries.find({})
-      .sort({ "rating": -1 }); // rating alanına göre büyükten küçüğe sıralama
-   //   .limit(10); // İlk 10 filmi al
-
+    const topRatedMovies = await movieSeries.find({}).sort({ rating: -1 }); // rating alanına göre büyükten küçüğe sıralama
+    //   .limit(10); // İlk 10 filmi al
 
     console.log(topRatedMovies);
     res.status(200).json({
