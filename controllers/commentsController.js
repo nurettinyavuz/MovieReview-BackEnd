@@ -241,12 +241,12 @@ exports.calculateAverageRating = async (req, res) => {
     await Promise.all(
       movieseriess.map(async (commentId, index) => {
         const res = await Comment.findById(commentId);
-         sumRating+=res.rating;
+        sumRating += res.rating;
         allComment.push(res);
       })
     );
     console.log(allComment);
-    const averageRating = sumRating / movieseriess .length;
+    const averageRating = sumRating / movieseriess.length;
 
     if (sumRating == 0) {
       return res.status(200).json({
@@ -271,7 +271,27 @@ exports.calculateAverageRating = async (req, res) => {
       error: error.message,
     });
   }
-}; 
+};
+
+exports.TopTenMovie = async (req, res) => {
+  try {
+    const topRatedMovies = await movieSeries.find({})
+      .sort({ "rating": -1 }); // rating alanına göre büyükten küçüğe sıralama
+   //   .limit(10); // İlk 10 filmi al
+
+
+    console.log(topRatedMovies);
+    res.status(200).json({
+      status: true,
+      topRatedMovies: filteredMovies,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
 
 // Like işlemi
 exports.Like = async (req, res) => {
@@ -297,7 +317,16 @@ exports.Like = async (req, res) => {
 
       res.status(200).json('The comment has been liked');
     } else {
-      res.status(400).json('You have already liked this comment');
+      // Kullanıcı daha önce beğenmişse, beğeniyi geri al
+      await comment.updateOne({ $pull: { likes: userId } });
+
+      // Kullanıcının "likedComments" listesinden bu yorumu çıkarın
+      await User.updateOne(
+        { _id: userId },
+        { $pull: { likedComments: comment._id } }
+      );
+
+      res.status(200).json('The like has been removed');
     }
   } catch (error) {
     res.status(500).json({
@@ -311,8 +340,6 @@ exports.Like = async (req, res) => {
 exports.Dislike = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
-
-    // authenticateToken middleware'i kullanıcı bilgilerini req.user'a ekledi.
     const userId = req.user.userId; // JWT'den çıkartılan user id
 
     const user = await User.findById(userId);
@@ -333,7 +360,16 @@ exports.Dislike = async (req, res) => {
 
       res.status(200).json('The comment has been disliked');
     } else {
-      res.status(400).json('You have already disliked this comment');
+      // Kullanıcı daha önce dislike yapmışsa, dislike'ı geri al
+      await comment.updateOne({ $pull: { dislikes: userId } });
+
+      // Kullanıcının "dislikedComments" listesinden bu yorumu çıkarın
+      await User.updateOne(
+        { _id: userId },
+        { $pull: { dislikedComments: comment._id } }
+      );
+
+      res.status(200).json('The dislike has been removed');
     }
   } catch (error) {
     res.status(500).json({
