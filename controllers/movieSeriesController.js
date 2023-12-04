@@ -89,6 +89,23 @@ exports.getMovieSeries = async (req, res) => {
   }
 };
 
+//Güncel Filmler
+exports.CurrentMovies = async (req, res) => {
+  try {
+    const movieseries = await movieSeries.find({}).sort({startDate: -1}).limit(15); // 1 ( en küçük tarihten en büyüğe), -1 ( en büyük tarihten en küçüğe)
+    console.log(movieseries);
+    res.status(200).json({
+      success: true,
+      movieseries,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
 // Organizasyon Listelemek
 exports.getAllMovieSeries = async (req, res) => {
   try {
