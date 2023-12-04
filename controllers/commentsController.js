@@ -84,10 +84,9 @@ exports.CreateComment = async (req, res) => {
 // Delete Comment
 exports.deleteComment = async (req, res) => {
   try {
-    
     // Silinecek yorumun ID'sini al
     const commentId = req.params.commentId;
-     
+
     // Yorumu veritabanından bul
     const comment = await Comment.findById(commentId);
 
@@ -117,6 +116,16 @@ exports.deleteComment = async (req, res) => {
       user.comments = user.comments.filter(
         (userCommentId) => userCommentId.toString() !== commentId.toString()
       );
+
+      // Remove likes and dislikes associated with the comment
+      user.likedComments = user.likedComments.filter(
+        (likedCommentId) => likedCommentId.toString() !== commentId.toString()
+      );
+      user.dislikedComments = user.dislikedComments.filter(
+        (dislikedCommentId) =>
+          dislikedCommentId.toString() !== commentId.toString()
+      );
+
       // Kullanıcı modelini güncelle
       await user.save();
     }
@@ -285,15 +294,13 @@ exports.calculateAverageRating = async (req, res) => {
   }
 };
 
-exports.TopTenMovie = async (req, res) => {
+exports.TopMovie = async (req, res) => {
   try {
-    const topRatedMovies = await movieSeries.find({}).sort({ rating: -1 }); // rating alanına göre büyükten küçüğe sıralama
-    //   .limit(10); // İlk 10 filmi al
+    const topMovies = await movieSeries.find().sort({ rating: -1 }).limit(10);
 
-    console.log(topRatedMovies);
     res.status(200).json({
-      status: true,
-      topRatedMovies: filteredMovies,
+      success: true,
+      topMovies,
     });
   } catch (error) {
     res.status(400).json({
