@@ -117,7 +117,6 @@ exports.deleteComment = async (req, res) => {
         (userCommentId) => userCommentId.toString() !== commentId.toString()
       );
 
-      // Remove likes and dislikes associated with the comment
       user.likedComments = user.likedComments.filter(
         (likedCommentId) => likedCommentId.toString() !== commentId.toString()
       );
