@@ -10,14 +10,11 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
 
-
-
 const pageRoute = require('./routes/pageRoute');
 const userRoute = require('./routes/userRoute');
 const movieSeriesRoute =require('./routes/movieSeriesRoute');
 const commentsRoute =require('./routes/commentsRoute');
 const adminRoute =require('./routes/adminRoute');
-const dashboardRoute = require ('./routes/dashboardRoute');
 
 
 const app = express();
@@ -62,7 +59,6 @@ mongoose
     app.use('/comments', commentsRoute);
     app.use('/rating', commentsRoute);
     app.use('/admin', adminRoute);
-    app.use('/dashboard', dashboardRoute);
 
 
     const port = 5000;

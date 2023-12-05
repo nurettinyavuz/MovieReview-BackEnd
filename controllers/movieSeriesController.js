@@ -106,8 +106,8 @@ exports.CurrentMovies = async (req, res) => {
   }
 };
 
-// Organizasyon Listelemek
-exports.getAllMovieSeries = async (req, res) => {
+// SearchBar
+exports.getSearchMovieSeries = async (req, res) => {
   try {
     const searchQuery = req.query.search; // Kullanıcının arama çubuğuna girdiği değeri alın
     const filter = {};
