@@ -14,8 +14,6 @@ const pageRoute = require('./routes/pageRoute');
 const userRoute = require('./routes/userRoute');
 const movieSeriesRoute =require('./routes/movieSeriesRoute');
 const commentsRoute =require('./routes/commentsRoute');
-const adminRoute =require('./routes/adminRoute');
-
 
 const app = express();
 
@@ -58,7 +56,6 @@ mongoose
     app.use('/movieSeries', movieSeriesRoute);
     app.use('/comments', commentsRoute);
     app.use('/rating', commentsRoute);
-    app.use('/admin', adminRoute);
 
 
     const port = 5000;
@@ -69,3 +66,4 @@ mongoose
   .catch((error) => {
     console.log('DB Connection Error: ', error);
   });
+
