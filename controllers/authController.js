@@ -218,7 +218,6 @@ exports.getUser = async (req, res) => {
       success: true,
       user,
     });
-    console.log(user);
   } catch (error) {
     res.status(400).json({
       status: 'fail',

@@ -14,7 +14,6 @@ router.route('/refreshToken').post(authController.refreshToken);//http://localho
 router.route('/logout').post(authMiddleware.authenticateToken, authController.logoutUser);//http://localhost:5000/users/logout
 router.route('/userLevel').post(authController.userLevel);
 router.route('/:id/deleteUser').delete(authController.deleteUser);//http://localhost:5000/users/:id/deleteUser (userId)
-//router.route('/extract-cookie').get(authMiddleware.authenticateToken,authController.extractCookie);//http://localhost:5000/users/extract-cookie
-//router.route('/dashboard').get(authMiddleware.authenticateToken, authController.getDashboardPage);
+
 
 module.exports = router;

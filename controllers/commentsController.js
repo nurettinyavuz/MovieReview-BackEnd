@@ -21,7 +21,6 @@ exports.CreateComment = async (req, res) => {
     }
 
     const movieseries = await movieSeries.findById(movieSeriesId); //movieseries tüm yorumları çeker
-    console.log(movieseries);
     if (!movieseries) {
       return res.status(404).json({
         status: 'fail',
@@ -49,8 +48,7 @@ exports.CreateComment = async (req, res) => {
       movieSeriesName: movieSeriesName,
       rating: rating,
     });
-    console.log(userName);
-    // console.log(filmId);
+
 
     // Mevcut yorumları alıp yeni yorumun ObjectId'sini eklemek
     if (Array.isArray(movieseries.comments)) {
@@ -265,7 +263,6 @@ exports.calculateAverageRating = async (req, res) => {
         allComment.push(res);
       })
     );
-    console.log(allComment);
     const averageRating = sumRating / movieseriess.length;
 
     if (sumRating == 0) {

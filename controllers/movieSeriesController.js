@@ -80,7 +80,6 @@ exports.getMovieSeries = async (req, res) => {
       success: true,
       movieseries,
     });
-    console.log(movieseries);
   } catch (error) {
     res.status(400).json({
       status: 'fail',
