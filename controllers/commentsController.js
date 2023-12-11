@@ -4,28 +4,58 @@ const movieSeries = require('../models/movieSeries');
 const Comment = require('../models/Comment');
 const User = require('../models/User');
 
+
+const calculateAverageRating = async (id) => {
+  try {
+    const movieseriess = (await movieSeries.findOne({ _id:id }))
+      .comments;
+    let allComment = [];
+    let sumRating = 0;
+    await Promise.all(
+      movieseriess.map(async (commentId, index) => {
+        const res = await Comment.findById(commentId);
+        sumRating += res.rating;
+        allComment.push(res);
+      })
+    );
+    const averageRating = sumRating / movieseriess.length;
+
+    // MovieSeries belgesini alÄ±n ve ortalama puanÄ± kaydedin
+    const movieseries = await movieSeries.findOne({ _id:id });
+    if (movieseries && sumRating != 0) {
+      movieseries.rating = averageRating;
+      await movieseries.save();
+    }
+    else{
+      return false
+    }
+
+  } catch (error) {
+    return error;
+  }
+};
+
 exports.CreateComment = async (req, res) => {
   try {
-    // Kullanıcının kimliğini authorizationToken'dan alın
+    // KullanÄ±cÄ±nÄ±n kimliÄŸini authorizationToken'dan alÄ±n
     const userId = req.user.userId;
     const movieSeriesId = req.params.movieSeriesId;
 
-    // Kullanıcının adını da alın
+    // KullanÄ±cÄ±nÄ±n adÄ±nÄ± da alÄ±n
     const user = await User.findById(userId);
-    const userName = user.UserName; // modeldeki kullanıcının adını çekin
+    const userName = user.UserName; // modeldeki kullanÄ±cÄ±nÄ±n adÄ±nÄ± Ã§ekin
     if (!user) {
       return res.status(404).json({
         status: 'fail',
-        error: 'Kullanıcı bulunamadı',
+        error: 'KullanÄ±cÄ± bulunamadÄ±',
       });
     }
 
-    const movieseries = await movieSeries.findById(movieSeriesId); //movieseries tüm yorumları çeker
-    console.log(movieseries);
+    const movieseries = await movieSeries.findById(movieSeriesId); //movieseries tÃ¼m yorumlarÄ± Ã§eker
     if (!movieseries) {
       return res.status(404).json({
         status: 'fail',
-        error: 'Belirtilen film serisi bulunamadı.',
+        error: 'Belirtilen film serisi bulunamadÄ±.',
       });
     }
 
@@ -33,26 +63,25 @@ exports.CreateComment = async (req, res) => {
 
     const { comment, rating } = req.body;
 
-    // Kullanıcıdan gelen yıldız değerini kontrol etmek
+    // KullanÄ±cÄ±dan gelen yÄ±ldÄ±z deÄŸerini kontrol etmek
     if (rating < 1 || rating > 5) {
       return res.status(400).json({
         status: 'fail',
-        error: 'Yıldız değeri 1 ile 5 arasında olmalıdır.',
+        error: 'YÄ±ldÄ±z deÄŸeri 1 ile 5 arasÄ±nda olmalÄ±dÄ±r.',
       });
     }
 
     const createComment = await Comment.create({
       comment: comment,
-      createdUserId: userId, // Yorumun kimin tarafından yapıldığını belirtin
-      userName: userName, // Yorumu yapan kullanıcının adını ekleyin
+      createdUserId: userId, // Yorumun kimin tarafÄ±ndan yapÄ±ldÄ±ÄŸÄ±nÄ± belirtin
+      userName: userName, // Yorumu yapan kullanÄ±cÄ±nÄ±n adÄ±nÄ± ekleyin
       movieSeriesId: movieSeriesId,
       movieSeriesName: movieSeriesName,
       rating: rating,
     });
-    console.log(userName);
-    // console.log(filmId);
 
-    // Mevcut yorumları alıp yeni yorumun ObjectId'sini eklemek
+
+    // Mevcut yorumlarÄ± alÄ±p yeni yorumun ObjectId'sini eklemek
     if (Array.isArray(movieseries.comments)) {
       movieseries.comments.push(createComment._id);
     } else {
@@ -60,7 +89,7 @@ exports.CreateComment = async (req, res) => {
     }
     await movieseries.save();
 
-    // Kullanıcı modelini güncelleyin ve yorumun ObjectId'sini ekleyin
+    // KullanÄ±cÄ± modelini gÃ¼ncelleyin ve yorumun ObjectId'sini ekleyin
     if (Array.isArray(user.comments)) {
       user.comments.push(createComment._id);
     } else {
@@ -68,11 +97,21 @@ exports.CreateComment = async (req, res) => {
     }
     await user.save();
 
-    res.status(201).json({
-      success: true,
-      message: 'Comment added successfully.',
-      createComment,
-    });
+    await calculateAverageRating(movieSeriesId);
+  // console.log(averageRating);
+   if(calculateAverageRating(movieSeriesId)){
+        res.status(201).json({
+        success: true,
+        message: 'Comment added successfully.',
+        createComment,
+      });
+   }else{
+      return res.status(400).json({
+          success: false,
+          message: 'Comment could not be added.',
+        });
+   }
+
   } catch (error) {
     res.status(400).json({
       status: 'fail',
@@ -87,10 +126,10 @@ exports.deleteComment = async (req, res) => {
     // Silinecek yorumun ID'sini al
     const commentId = req.params.commentId;
 
-    // Yorumu veritabanından bul
+    // Yorumu veritabanÄ±ndan bul
     const comment = await Comment.findById(commentId);
 
-    // Yorumu veritabanından sil
+    // Yorumu veritabanÄ±ndan sil
     await Comment.findByIdAndDelete(commentId);
 
     if (!comment) {
@@ -99,20 +138,20 @@ exports.deleteComment = async (req, res) => {
         error: 'Comment not found.',
       });
     }
-    // Yorumun bağlı olduğu film serisinden kaldır
+    // Yorumun baÄŸlÄ± olduÄŸu film serisinden kaldÄ±r
     const movieseries = await movieSeries.findOne({ comments: commentId });
     if (movieseries) {
-      //Önce CommentId'yi (yani silinecek veriyi) Veritabanında filmlerin içindeki array'dan kaldırıyoruz
-      //sonradan da kaldırılmış halini kayıt ediyoruz
+      //Ã–nce CommentId'yi (yani silinecek veriyi) VeritabanÄ±nda filmlerin iÃ§indeki array'dan kaldÄ±rÄ±yoruz
+      //sonradan da kaldÄ±rÄ±lmÄ±ÅŸ halini kayÄ±t ediyoruz
       movieseries.comments.pull(commentId);
       await movieseries.save();
     }
 
-    // Kullanıcının modelini bul
+    // KullanÄ±cÄ±nÄ±n modelini bul
     const user = await User.findById(comment.createdUserId);
 
     if (user) {
-      // Kullanıcının comments dizisinden silinen yorumun ID'sini kaldır
+      // KullanÄ±cÄ±nÄ±n comments dizisinden silinen yorumun ID'sini kaldÄ±r
       user.comments = user.comments.filter(
         (userCommentId) => userCommentId.toString() !== commentId.toString()
       );
@@ -125,7 +164,7 @@ exports.deleteComment = async (req, res) => {
           dislikedCommentId.toString() !== commentId.toString()
       );
 
-      // Kullanıcı modelini güncelle
+      // KullanÄ±cÄ± modelini gÃ¼ncelle
       await user.save();
     }
 
@@ -144,15 +183,15 @@ exports.deleteComment = async (req, res) => {
 // Update Comment
 exports.updateComment = async (req, res) => {
   try {
-    const commentId = req.params.commentId; // Güncellenecek yorumun ID'sini al
+    const commentId = req.params.commentId; // GÃ¼ncellenecek yorumun ID'sini al
     const updatedCommentData = req.body; // Yeni yorum verilerini al
 
-    // Yorumu veritabanından bul
+    // Yorumu veritabanÄ±ndan bul
     const comment = await Comment.findByIdAndUpdate(
       commentId,
       updatedCommentData,
       {
-        new: true, // Güncellenmiş yorumu döndür
+        new: true, // GÃ¼ncellenmiÅŸ yorumu dÃ¶ndÃ¼r
       }
     );
 
@@ -166,7 +205,7 @@ exports.updateComment = async (req, res) => {
     res.status(200).json({
       success: true,
       message: 'Comment updated successfully.',
-      data: comment, // Güncellenmiş yorum verilerini yanıt olarak dön
+      data: comment, // GÃ¼ncellenmiÅŸ yorum verilerini yanÄ±t olarak dÃ¶n
     });
   } catch (error) {
     res.status(400).json({
@@ -179,20 +218,20 @@ exports.updateComment = async (req, res) => {
 //Get User's Comment
 exports.getUserComment = async (req, res) => {
   try {
-    const user = await User.findOne({ _id: req.params.id }); //URL'de ki user'ı çektik
+    const user = await User.findOne({ _id: req.params.id }); //URL'de ki user'Ä± Ã§ektik
     console.log(user);
-    const comments = user.comments; //User'ın içindeki comments'i çektik
+    const comments = user.comments; //User'Ä±n iÃ§indeki comments'i Ã§ektik
 
     if (!user._id) {
       return res.status(404).json({
         status: false,
-        message: 'Böyle bir kullanıcı yok',
+        message: 'BÃ¶yle bir kullanÄ±cÄ± yok',
       });
     }
     if (!comments) {
       return res.status(404).json({
         status: false,
-        message: 'Kullanıcıya ait yorum bulunamadı',
+        message: 'KullanÄ±cÄ±ya ait yorum bulunamadÄ±',
       });
     }
 
@@ -224,19 +263,19 @@ exports.getComment = async (req, res) => {
   }
 };
 
-//All Comment (Filme gelen yorumların ID'lerini buluyor)
+//All Comment (Filme gelen yorumlarÄ±n ID'lerini buluyor)
 exports.getAllComments = async (req, res) => {
   try {
-    const movieId = req.params.id; //hangi film veya dizi için yorumları çekeceğimizi belirler
+    const movieId = req.params.id; //hangi film veya dizi iÃ§in yorumlarÄ± Ã§ekeceÄŸimizi belirler
     const movie = await movieSeries.findById(movieId).populate({
       path: 'comments',
-      options: { sort: { createdDate: -1 } }, // Yorumları yaratılma tarihine göre sırala
+      options: { sort: { createdDate: -1 } }, // YorumlarÄ± yaratÄ±lma tarihine gÃ¶re sÄ±rala
     });
 
     if (!movie) {
       return res.status(404).json({
         success: false,
-        message: 'Film veya dizi bulunamadı.',
+        message: 'Film veya dizi bulunamadÄ±.',
       });
     }
 
@@ -252,46 +291,6 @@ exports.getAllComments = async (req, res) => {
   }
 };
 
-exports.calculateAverageRating = async (req, res) => {
-  try {
-    const movieseriess = (await movieSeries.findOne({ _id: req.params.id }))
-      .comments;
-    let allComment = [];
-    let sumRating = 0;
-    await Promise.all(
-      movieseriess.map(async (commentId, index) => {
-        const res = await Comment.findById(commentId);
-        sumRating += res.rating;
-        allComment.push(res);
-      })
-    );
-    console.log(allComment);
-    const averageRating = sumRating / movieseriess.length;
-
-    if (sumRating == 0) {
-      return res.status(200).json({
-        averageRating: 0,
-      });
-    }
-
-    // MovieSeries belgesini alın ve ortalama puanı kaydedin
-    const movieseries = await movieSeries.findOne({ _id: req.params.id });
-    if (movieseries) {
-      movieseries.rating = averageRating;
-      await movieseries.save();
-    }
-
-    res.status(200).json({
-      status: true,
-      averageRating,
-    });
-  } catch (error) {
-    res.status(400).json({
-      success: false,
-      error: error.message,
-    });
-  }
-};
 
 exports.TopMovie = async (req, res) => {
   try {
@@ -309,23 +308,23 @@ exports.TopMovie = async (req, res) => {
   }
 };
 
-// Like işlemi
+// Like iÅŸlemi
 exports.Like = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
-    const userId = req.user.userId; // JWT'den çıkartılan user id
+    const userId = req.user.userId; // JWT'den Ã§Ä±kartÄ±lan user id
 
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json('User not found');
     }
 
-    // Kullanıcının daha önce bu yorumu beğenmediğini ve bu yorumu daha önce beğenmediyse
+    // KullanÄ±cÄ±nÄ±n daha Ã¶nce bu yorumu beÄŸenmediÄŸini ve bu yorumu daha Ã¶nce beÄŸenmediyse
     if (!user.likedComments.includes(comment._id)) {
-      // Like işlemini gerçekleştir
+      // Like iÅŸlemini gerÃ§ekleÅŸtir
       await comment.updateOne({ $addToSet: { likes: userId } });
 
-      // Kullanıcının "likedComments" listesine bu yorumu ekleyin
+      // KullanÄ±cÄ±nÄ±n "likedComments" listesine bu yorumu ekleyin
       await User.updateOne(
         { _id: userId },
         { $addToSet: { likedComments: comment._id } }
@@ -333,10 +332,10 @@ exports.Like = async (req, res) => {
 
       res.status(200).json('The comment has been liked');
     } else {
-      // Kullanıcı daha önce beğenmişse, beğeniyi geri al
+      // KullanÄ±cÄ± daha Ã¶nce beÄŸenmiÅŸse, beÄŸeniyi geri al
       await comment.updateOne({ $pull: { likes: userId } });
 
-      // Kullanıcının "likedComments" listesinden bu yorumu çıkarın
+      // KullanÄ±cÄ±nÄ±n "likedComments" listesinden bu yorumu Ã§Ä±karÄ±n
       await User.updateOne(
         { _id: userId },
         { $pull: { likedComments: comment._id } }
@@ -352,23 +351,23 @@ exports.Like = async (req, res) => {
   }
 };
 
-// Dislike işlemi
+// Dislike iÅŸlemi
 exports.Dislike = async (req, res) => {
   try {
     const comment = await Comment.findOne({ _id: req.params.id });
-    const userId = req.user.userId; // JWT'den çıkartılan user id
+    const userId = req.user.userId; // JWT'den Ã§Ä±kartÄ±lan user id
 
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json('User not found');
     }
 
-    // Kullanıcının daha önce bu yorumu beğenmediğini ve bu yorumu daha önce beğenmediyse
+    // KullanÄ±cÄ±nÄ±n daha Ã¶nce bu yorumu beÄŸenmediÄŸini ve bu yorumu daha Ã¶nce beÄŸenmediyse
     if (!user.dislikedComments.includes(comment._id)) {
-      // Dislike işlemini gerçekleştir
+      // Dislike iÅŸlemini gerÃ§ekleÅŸtir
       await comment.updateOne({ $addToSet: { dislikes: userId } });
 
-      // Kullanıcının "dislikedComments" listesine bu yorumu ekleyin
+      // KullanÄ±cÄ±nÄ±n "dislikedComments" listesine bu yorumu ekleyin
       await User.updateOne(
         { _id: userId },
         { $addToSet: { dislikedComments: comment._id } }
@@ -376,10 +375,10 @@ exports.Dislike = async (req, res) => {
 
       res.status(200).json('The comment has been disliked');
     } else {
-      // Kullanıcı daha önce dislike yapmışsa, dislike'ı geri al
+      // KullanÄ±cÄ± daha Ã¶nce dislike yapmÄ±ÅŸsa, dislike'Ä± geri al
       await comment.updateOne({ $pull: { dislikes: userId } });
 
-      // Kullanıcının "dislikedComments" listesinden bu yorumu çıkarın
+      // KullanÄ±cÄ±nÄ±n "dislikedComments" listesinden bu yorumu Ã§Ä±karÄ±n
       await User.updateOne(
         { _id: userId },
         { $pull: { dislikedComments: comment._id } }
@@ -394,3 +393,4 @@ exports.Dislike = async (req, res) => {
     });
   }
 };
+
