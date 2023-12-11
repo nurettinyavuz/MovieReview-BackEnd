@@ -35,7 +35,7 @@ const calculateAverageRating = async (id) => {
   }
 };
 
-exports.CreateComment = async (req, res, calculateAverageRating ) => {
+exports.CreateComment = async (req, res ) => {
   try {
     // KullanÄ±cÄ±nÄ±n kimliÄŸini authorizationToken'dan alÄ±n
     const userId = req.user.userId;
@@ -98,10 +98,8 @@ exports.CreateComment = async (req, res, calculateAverageRating ) => {
     }
     await user.save();
 
-    await calculateAverageRating(req, res);
-
     await calculateAverageRating(movieSeriesId);
-  // console.log(averageRating);
+
    if(calculateAverageRating(movieSeriesId)){
         res.status(201).json({
         success: true,
@@ -115,8 +113,6 @@ exports.CreateComment = async (req, res, calculateAverageRating ) => {
         });
    }
 
-    
-    await calculateAverageRating(req, res);
 
   } catch (error) {
     res.status(400).json({
