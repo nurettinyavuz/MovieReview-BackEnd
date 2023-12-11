@@ -19,59 +19,6 @@ exports.createMovieSeries = async (req, res) => {
   }
 };
 
-/* 
-  exports.loginAdmin = async (req, res) => {
-    try {
-      const { email, password } = req.body; //İstek gövdesinden gelen email ve password değerlerini çıkartıyoruz.(Kullanıcıdan veriyi aldığımız kısım)
-      const organizer = await Organizer.findOne({ email }); // Kullanıcıdan aldığınız email değeriyle, veritabanında User modelindeki email alanı eşleşen bir kullanıcı belgesini bulmak için
-      console.log( organizer); 
-      if (!organizer) {
-        return res.status(400).json({
-          status: 'fail',
-          error: 'Girdiğiniz email yanlış',
-        });
-      }
-      const same = await bcrypt.compare(password, organizer.password); //kullanıcının girdiği şifrenin, veritabanındaki kullanıcının şifresiyle eşleşip eşleşmediğini kontrol eder,Karşılaştırma sonucu same değişkenine atanır.
-      if (same) {
-        //eğer şifreler eşleşirse çalışır yoksa üstteki if çalışır
-        req.session.organizerID = organizer._id; //Yukarıda tanımladığımız user'ın id'sini userID'ye atayacağız (Her kullanıcının farklı ıd'si vardı bu da o)(Hangi kullanıcının giriş işlemi yaptığını ayıt edebiliriz)
-        res.status(200).json({
-          status: 'success',
-          organizer,
-        });
-      } else {
-        res.status(400).json({
-          status: 'fail',
-          error: 'Girdiğiniz sifre yanlış',
-        });
-      }
-    } catch (error) {
-      res.status(400).json({
-        status: 'fail',
-        error,
-      });
-    }
-  };
-  
-//TEKİL KİSİ
-exports.getAdmin = async (req, res) => {
-  try {
-    //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
-    const organizer = await Organizer.findOne({ _id: req.params.id });
-    res.status(200).json({
-      success: true,
-      organizer,
-    });
-    console.log(organizer);
-  } catch (error) {
-    res.status(400).json({
-      status: 'fail',
-      error: error.message,
-    });
-  }
-}; 
-*/
-
 //TEKİL Film
 exports.getMovieSeries = async (req, res) => {
   try {

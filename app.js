@@ -10,7 +10,6 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
 
-const pageRoute = require('./routes/pageRoute');
 const userRoute = require('./routes/userRoute');
 const movieSeriesRoute =require('./routes/movieSeriesRoute');
 const commentsRoute =require('./routes/commentsRoute');
@@ -51,7 +50,6 @@ mongoose
       userIN = req.session.userID;
       next(); //next yazmamızın nedeni diğer middleware'a gitmesi için
     });
-    app.use('/', pageRoute);
     app.use('/users', userRoute);
     app.use('/movieSeries', movieSeriesRoute);
     app.use('/comments', commentsRoute);

@@ -4,7 +4,7 @@ const movieSeries = require('../models/movieSeries');
 const Comment = require('../models/Comment');
 const User = require('../models/User');
 
-exports.CreateComment = async (req, res) => {
+exports.CreateComment = async (req, res, calculateAverageRating ) => {
   try {
     // Kullanıcının kimliğini authorizationToken'dan alın
     const userId = req.user.userId;
@@ -66,11 +66,16 @@ exports.CreateComment = async (req, res) => {
     }
     await user.save();
 
+    await calculateAverageRating(req, res);
+
     res.status(201).json({
       success: true,
       message: 'Comment added successfully.',
       createComment,
     });
+    
+    await calculateAverageRating(req, res);
+
   } catch (error) {
     res.status(400).json({
       status: 'fail',
