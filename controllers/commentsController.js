@@ -35,7 +35,7 @@ const calculateAverageRating = async (id) => {
   }
 };
 
-exports.CreateComment = async (req, res) => {
+exports.CreateComment = async (req, res, calculateAverageRating ) => {
   try {
     // KullanÄ±cÄ±nÄ±n kimliÄŸini authorizationToken'dan alÄ±n
     const userId = req.user.userId;
@@ -51,7 +51,8 @@ exports.CreateComment = async (req, res) => {
       });
     }
 
-    const movieseries = await movieSeries.findById(movieSeriesId); //movieseries tÃ¼m yorumlarÄ± Ã§eker
+    const movieseries = await movieSeries.findById(movieSeriesId); //movieseries tüm yorumları çeker
+    console.log(movieseries);
     if (!movieseries) {
       return res.status(404).json({
         status: 'fail',
@@ -97,6 +98,8 @@ exports.CreateComment = async (req, res) => {
     }
     await user.save();
 
+    await calculateAverageRating(req, res);
+
     await calculateAverageRating(movieSeriesId);
   // console.log(averageRating);
    if(calculateAverageRating(movieSeriesId)){
@@ -111,6 +114,9 @@ exports.CreateComment = async (req, res) => {
           message: 'Comment could not be added.',
         });
    }
+
+    
+    await calculateAverageRating(req, res);
 
   } catch (error) {
     res.status(400).json({

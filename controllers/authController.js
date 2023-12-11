@@ -218,7 +218,6 @@ exports.getUser = async (req, res) => {
       success: true,
       user,
     });
-    console.log(user);
   } catch (error) {
     res.status(400).json({
       status: 'fail',
@@ -255,15 +254,3 @@ exports.getAllUser = async (req, res) => {
   }
 };
 
-exports.userLevel = async (req, res) => {
-  try {
-    res.status(200).json({
-      success: true,
-    });
-  } catch (error) {
-    res.status(400).json({
-      status: 'fail',
-      error: error.message,
-    });
-  }
-};
