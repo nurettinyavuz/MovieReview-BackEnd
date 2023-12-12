@@ -5,5 +5,5 @@
 •	Bu projenin ben backend kısmını yazığım için, genel olarak projede kullandığım teknolojiler; Node.js, express.js, mongoDB,  JWT Token, mongoose ve bcrypt şifreleme teknolojisini kullandım.
 
 # MovieReview-BackEnd-Schema
-<img src="https://github.com/nurettinyavuz/MovieReview-BackEnd/blob/main/Project%20Images/MovieReview-Backend-Schema.png" alt="alt text" width="1500" height="650">
+<img src="https://github.com/nurettinyavuz/MovieReview-BackEnd/blob/main/Project%20Images/MovieReview-Backend-Schema.png" alt="alt text" width="1300" height="600">
 
