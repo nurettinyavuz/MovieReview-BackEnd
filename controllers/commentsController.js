@@ -52,7 +52,6 @@ exports.CreateComment = async (req, res ) => {
     }
 
     const movieseries = await movieSeries.findById(movieSeriesId); //movieseries tüm yorumları çeker
-    console.log(movieseries);
     if (!movieseries) {
       return res.status(404).json({
         status: 'fail',
@@ -170,10 +169,20 @@ exports.deleteComment = async (req, res) => {
       await user.save();
     }
 
-    res.status(200).json({
-      success: true,
-      message: 'Comment deleted successfully.',
-    });
+    
+    await calculateAverageRating(movieseries);
+
+   if(calculateAverageRating(movieseries)){
+        res.status(201).json({
+        success: true,
+        message: 'Comment added successfully.',
+      });
+   }else{
+      return res.status(400).json({
+          success: false,
+          message: 'Comment could not be added.',
+        });
+   }
   } catch (error) {
     res.status(400).json({
       status: 'fail',
