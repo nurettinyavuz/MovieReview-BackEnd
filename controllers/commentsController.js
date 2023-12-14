@@ -175,12 +175,12 @@ exports.deleteComment = async (req, res) => {
    if(calculateAverageRating(movieseries)){
         res.status(201).json({
         success: true,
-        message: 'Comment added successfully.',
+        message: 'Comment deleted successfully.',
       });
    }else{
       return res.status(400).json({
           success: false,
-          message: 'Comment could not be added.',
+          message: 'Comment could not be deleted.',
         });
    }
   } catch (error) {
