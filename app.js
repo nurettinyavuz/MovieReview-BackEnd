@@ -13,6 +13,9 @@ const cookieParser = require('cookie-parser');
 const userRoute = require('./routes/userRoute');
 const movieSeriesRoute =require('./routes/movieSeriesRoute');
 const commentsRoute =require('./routes/commentsRoute');
+const AdminUserRoute = require('./routes/AdminRoutes/AdminUserRoute');
+const AdminMovieSeriesRoute =require('./routes/AdminRoutes/AdminMovieSeriesRoute');
+const AdminCommentsRoute =require('./routes/AdminRoutes/AdminCommentsRoute');
 
 const app = express();
 
@@ -54,7 +57,9 @@ mongoose
     app.use('/movieSeries', movieSeriesRoute);
     app.use('/comments', commentsRoute);
     app.use('/rating', commentsRoute);
-
+    app.use('/AdminUser',AdminUserRoute);
+    app.use('/AdminMovieseries',AdminMovieSeriesRoute);
+    app.use('/AdminComments',AdminCommentsRoute);
 
     const port = 5000;
     app.listen(port, () => {
