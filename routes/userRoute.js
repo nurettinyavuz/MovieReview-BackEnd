@@ -7,7 +7,7 @@ const router = express.Router();
 
 
 router.route('/:id').get(authController.getUser);
-router.route('/AllUsers').get(authController.getAllUser);
+router.route('/Members/AllUsers').get(authController.getAllUsers);
 router.route('/register').post(authController.createUser);//http://localhost:5000/users/register
 router.route('/login').post(authController.loginUser,authMiddleware.authenticateToken);//http://localhost:5000/users/login
 router.route('/refreshToken').post(authController.refreshToken);//http://localhost:5000/users/refreshToken

@@ -212,7 +212,6 @@ exports.deleteUser = async (req, res) => {
 //TEKİL KİSİ
 exports.getUser = async (req, res) => {
   try {
-    //burada Id yerine slug yakalıyoruz linkte ıd yerine title gözüksün diye
     const user = await User.findOne({ _id: req.params.id });
     res.status(200).json({
       success: true,
@@ -226,29 +225,35 @@ exports.getUser = async (req, res) => {
   }
 };
 
-//All User
-exports.getAllUser = async (req, res) => {
+// All User 
+exports.getAllUsers = async (req, res) => {
   try {
-    const userId = req.params.id;
-    const userComment = await Comment.findById(userId).populate({
-      path: 'user',
-      options: { sort: { createdDate: -1 } }, // Yorumları yaratılma tarihine göre sırala
-    });
+    // Sayfa numarasını URL'den alır eğer sayfa isteği gelmezse 1 dönderir(page) ve sayfa başına kullanıcı sayısını al(perPage)
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 15;
 
-    if (!userComment) {
+    // Kullanıcıları belirli sayfaya göre getir
+    const allUsers = await User.find()
+      .skip((page - 1) * perPage) // Belirli sayfaya göre kullanıcıları atlar(3. sayfadakileri gösterin derse,ilk 2 sayfada kullanılan kullanıcıları atlar,o yüzden -1 yazdık)
+      .limit(perPage);
+
+    //hiç kullanıcı bulunamazsa veya kullanıcı listesi boşsa
+    if (!allUsers || allUsers.length === 0) {
       return res.status(404).json({
         success: false,
-        message: 'Bu kişiye ait yorum bulunamadı',
+        message: 'Hiç kullanıcı bulunamadı',
       });
     }
 
     res.status(200).json({
       success: true,
-      comments: userComment,
+      allUsers,
+      currentPage: page,
+      totalPages: Math.ceil(allUsers.length / perPage),
     });
   } catch (error) {
-    res.status(400).json({
-      status: 'fail',
+    res.status(500).json({
+      status: 'error',
       error: error.message,
     });
   }

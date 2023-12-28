@@ -7,7 +7,6 @@ const router = express.Router();
 
 router.route('/Search/MovieSeries').get(movieSeriesController.getSearchMovieSeries); //http://localhost:5000/movieSeries/Search/MovieSeries?search=ya
 router.route('/:id').get(movieSeriesController.getMovieSeries); //http://localhost:5000/movieSeries/:id
-router.route('/createMovieSeries').post(movieSeriesController.createMovieSeries); //http://localhost:5000/movieSeries/createMovieSeries
 router.route('/current/CurrentMovies').get(movieSeriesController.CurrentMovies); //http://localhost:5000/movieSeries/current/CurrentMovies
 
 
