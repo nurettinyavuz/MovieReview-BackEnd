@@ -21,6 +21,30 @@ exports.getMovieSeries = async (req, res) => {
   }
 };
 
+exports.getAllMovieSeries = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const perPage = 15;
+
+    // Kullanıcıları belirli sayfaya göre getir
+    const allmovieseries = await movieSeries.find()
+    .skip((page - 1) * perPage)
+    .limit(perPage);
+
+    res.status(200).json({
+      success: true,
+      allmovieseries,
+      currentpage: page,
+      totalPages: Math.ceil(allmovieseries.length / perPage), // ceil methodu yukarı yuvarlar
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
 //Güncel Filmler
 exports.CurrentMovies = async (req, res) => {
   try {

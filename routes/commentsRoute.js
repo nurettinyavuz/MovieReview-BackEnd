@@ -11,7 +11,6 @@ router.route('/rating/TopMovie').get(commentsController.TopMovie); //http://loca
 router.route('/:id').get(commentsController.getComment); //http://localhost:5000/comments/:id (Yorum id)
 router.route('/:id/user').get(commentsController.getUserComment); //http://localhost:5000/comments/:id/user (UserID)
 router.route('/:id/comments').get(commentsController.getAllComments); //http://localhost:5000/comments/:id/comments (Filmin id)
-//router.route('/:id/averagerating').get(commentsController.calculateAverageRating); //http://localhost:5000/comments/:id/averagerating (Filmin id)
 router.route('/:id/Like').put(authMiddleware.authenticateToken, commentsController.Like); //http://localhost:5000/comments/:id/Like (Yorum id)
 router.route('/:id/Dislike').put(authMiddleware.authenticateToken,commentsController.Dislike); //http://localhost:5000/comments/:id/Dislike (Yorum id)
 

@@ -249,7 +249,7 @@ exports.getAllUsers = async (req, res) => {
       success: true,
       allUsers,
       currentPage: page,
-      totalPages: Math.ceil(allUsers.length / perPage),
+      totalPages: Math.ceil(allUsers.length / perPage), // ceil methodu yukarı yuvarlar
     });
   } catch (error) {
     res.status(500).json({
