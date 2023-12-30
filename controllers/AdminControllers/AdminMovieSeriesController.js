@@ -19,6 +19,36 @@ exports.createMovieSeries = async (req, res) => {
   }
 };
 
+exports.updateMovieSeries = async (req, res) => {
+  try {
+    const movieSeriesId = req.params.id;
+    const updateMovieSeriesData = req.body;
+
+    const movieseries = await movieSeries.findByIdAndUpdate(
+      movieSeriesId,
+      updateMovieSeriesData,
+      {
+        new: true,
+      }
+    );
+    if (!movieSeries) {
+      res.status(400).json({
+        status: 'fail',
+        error: 'No movieSeries found',
+      });
+    }
+    res.status(201).json({
+      status: 'success',
+      movieseries,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
 exports.getAllMovies = async (req, res) => {
   try {
     const movies = await movieSeries.find({ MovieOrSeries: 'Film' });
@@ -32,7 +62,7 @@ exports.getAllMovies = async (req, res) => {
       status: 'success',
       movies,
     });
-  } catch {
+  } catch (error) {
     res.status(400).json({
       status: 'fail',
       error,
@@ -53,7 +83,7 @@ exports.getAllSeries = async (req, res) => {
       status: 'success',
       series,
     });
-  } catch {
+  } catch (error) {
     res.status(400).json({
       status: 'fail',
       error,
