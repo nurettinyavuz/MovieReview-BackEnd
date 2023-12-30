@@ -4,5 +4,6 @@ const AdminCommentController = require('../../controllers/AdminControllers/Admin
 
 const router = express.Router();
 
+router.route('/Admin/DeleteComment').delete(commentsController.deleteComment); //http://localhost:5000/AdminComments/Admin/DeleteComment
 
 module.exports = router;

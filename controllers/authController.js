@@ -67,7 +67,8 @@ let refreshTokens = [];
 exports.refreshToken = async (req, res) => {
   try {
     const { refreshToken } = req.body;
-    if (!refreshToken) return res.status(401).json({ error: 'refreshToken eksik' });
+    if (!refreshToken)
+      return res.status(401).json({ error: 'refreshToken eksik' });
 
     // refreshTokens dizisini kontrol edin
     if (!refreshTokens.includes(refreshToken)) {
@@ -180,7 +181,7 @@ exports.logoutUser = (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const userId = req.params.id; // Kullanıcı Id'si alındı
-    console.log("This user is deleted now"+userId);
+    console.log('This user is deleted now' + userId);
 
     // Kullanıcıyı veritabanından bulun
     const user = await User.findById(userId);
@@ -201,7 +202,7 @@ exports.deleteUser = async (req, res) => {
       message: 'Kullanıcı başarıyla silindi.',
     });
   } catch (error) {
-    console.error("Hata:", error); // Hata mesajını daha ayrıntılı olarak yazdırın
+    console.error('Hata:', error); // Hata mesajını daha ayrıntılı olarak yazdırın
     res.status(500).json({
       status: 'fail',
       error,
@@ -225,7 +226,7 @@ exports.getUser = async (req, res) => {
   }
 };
 
-// All User 
+// All User
 exports.getAllUsers = async (req, res) => {
   try {
     // Sayfa numarasını URL'den alır eğer sayfa isteği gelmezse 1 dönderir(page) ve sayfa başına kullanıcı sayısını al(perPage)
@@ -258,4 +259,3 @@ exports.getAllUsers = async (req, res) => {
     });
   }
 };
-
