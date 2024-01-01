@@ -18,44 +18,49 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     unique: true,
-  },  
+  },
   password: {
     type: String,
     required: true,
   },
   role: {
     type: String,
-    enum: ['user','admin'],
+    enum: ['user','banned', 'admin'],
     default: 'user', //otomatik user olarak giriş yapıyor
-  },
-  skillRank: {
-    type: String,
-    enum: ['Acemi','Amatör','Tecrübesiz','Yeni Başlayan','Orta Seviye','Deneyim Kazanmış','Yetenekli','İleri Düzey','Usta','Profesyonel'],
-    default: 'Acemi', //otomatik user olarak giriş yapıyor
   },
   userScore: {
     type: Number,
     default: 0, // Başlangıç puanı, isteğe bağlı olarak 0 veya başka bir değer olabilir.
   },
 
-//"comments" kullanıcının yaptığı yorumları tutar  
-  comments: [{ 
-    type: mongoose.Types.ObjectId, 
-    ref: 'Comment' 
-  }], 
-  
-// "like" yapılan filmleri tutar
-  likedComments: [{ 
-    type: mongoose.Types.ObjectId, 
-    ref: 'Movie' 
-  }], 
-  
-// "dislike" yapılan filmleri tutar
-  dislikedComments: [{
-    type: mongoose.Types.ObjectId, 
-    ref: 'Movie' 
-  }], 
+  //"comments" kullanıcının yaptığı yorumları tutar
+  comments: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Comment',
+    },
+  ],
 
+  // "like" yapılan filmleri tutar
+  likedComments: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Movie',
+    },
+  ],
+
+  // "dislike" yapılan filmleri tutar
+  dislikedComments: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Movie',
+    },
+  ],
+
+  isBanned: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UserSchema.pre('save', function (next) {
@@ -87,8 +92,6 @@ UserSchema.pre('findOneAndUpdate', function (next) {
     next();
   });
 });
-
-
 
 const User = mongoose.model('User', UserSchema);
 module.exports = User;

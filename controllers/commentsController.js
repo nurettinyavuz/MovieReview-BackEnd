@@ -50,6 +50,13 @@ exports.CreateComment = async (req, res ) => {
         error: 'Kullanıcı bulunamadı',
       });
     }
+    
+    if(user.role == 'banned'){
+      return res.status(400).json({
+        status: 'fail',
+        error: 'Kullanıcı yasaklandı.',
+      });
+    }
 
     const movieseries = await movieSeries.findById(movieSeriesId); //movieseries tüm yorumları çeker
     if (!movieseries) {
@@ -329,6 +336,13 @@ exports.Like = async (req, res) => {
       return res.status(404).json('User not found');
     }
 
+    if(user.role == 'banned'){
+      return res.status(400).json({
+        status: 'fail',
+        error: 'Kullanıcı yasaklandı.',
+      });
+    }
+
     // Kullanıcının daha önce bu yorumu beğenmediğini ve bu yorumu daha önce beğenmediyse
     if (!user.likedComments.includes(comment._id)) {
       // Like işlemini gerçekleştir
@@ -372,6 +386,13 @@ exports.Dislike = async (req, res) => {
       return res.status(404).json('User not found');
     }
 
+    if(user.role == 'banned'){
+      return res.status(400).json({
+        status: 'fail',
+        error: 'Kullanıcı yasaklandı.',
+      });
+    }
+    
     // Kullanıcının daha önce bu yorumu beğenmediğini ve bu yorumu daha önce beğenmediyse
     if (!user.dislikedComments.includes(comment._id)) {
       // Dislike işlemini gerçekleştir

@@ -110,6 +110,13 @@ exports.loginUser = async (req, res) => {
       });
     }
 
+    if(user.role == 'banned'){
+      return res.status(400).json({
+        status: 'fail',
+        error: 'Kullanıcı yasaklandı.',
+      });
+    }
+    
     const same = await bcrypt.compare(password, user.password);
 
     if (!same) {
