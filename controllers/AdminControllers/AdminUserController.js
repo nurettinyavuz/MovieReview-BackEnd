@@ -8,22 +8,30 @@ exports.bannedUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     if (!user) {
-      res.status(400).json({
+      return res.status(400).json({
         status: 'fail',
-        message:'Kullanıcı bulunamadı.',
-      });    }
-    user.role = 'banned';
-    user.isBanned = true;
+        message: 'Kullanıcı bulunamadı.',
+      });
+    }
+
+    if (user.isBanned === false) {
+      user.role = 'banned';
+      user.isBanned = true;
+    } else {
+      user.role = 'user';
+      user.isBanned = false;
+    }
+
     await user.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       status: 'success',
       data: user,
     });
   } catch (error) {
-    res.status(400).json({
+    return res.status(400).json({
       status: 'fail',
-      message: error,
+      message: error.message,
     });
   }
 };
