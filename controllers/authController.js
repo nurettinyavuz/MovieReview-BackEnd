@@ -116,6 +116,13 @@ exports.loginUser = async (req, res) => {
         error: 'Kullanıcı yasaklandı.',
       });
     }
+
+    if(user.role == 'admin'){
+      return res.status(400).json({
+        status: 'fail',
+        error: 'Admin girişi yapamazsınız.',
+      });
+    }
     
     const same = await bcrypt.compare(password, user.password);
 
@@ -180,39 +187,6 @@ exports.logoutUser = (req, res) => {
     res.status(500).json({
       status: 'fail',
       error: 'Çıkış işlemi sırasında bir hata oluştu.',
-    });
-  }
-};
-
-//Delete User
-exports.deleteUser = async (req, res) => {
-  try {
-    const userId = req.params.id; // Kullanıcı Id'si alındı
-    console.log('This user is deleted now' + userId);
-
-    // Kullanıcıyı veritabanından bulun
-    const user = await User.findById(userId);
-
-    // Kullanıcı mevcut değilse hata döndürün
-    if (!user) {
-      return res.status(404).json({
-        status: 'fail',
-        message: 'Kullanıcı bulunamadı.',
-      });
-    }
-
-    // Kullanıcıyı veritabanından silin
-    await user.deleteOne();
-
-    res.status(200).json({
-      status: 'success',
-      message: 'Kullanıcı başarıyla silindi.',
-    });
-  } catch (error) {
-    console.error('Hata:', error); // Hata mesajını daha ayrıntılı olarak yazdırın
-    res.status(500).json({
-      status: 'fail',
-      error,
     });
   }
 };

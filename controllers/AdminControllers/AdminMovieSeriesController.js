@@ -7,6 +7,15 @@ const Comment = require('../../models/Comment');
 exports.createMovieSeries = async (req, res) => {
   try {
     const movieseries = await movieSeries.create(req.body);
+    const user = req.user.userId;
+
+    if (user.role !== 'admin') {
+      return res.status(400).json({
+        status: 'fail',
+        error: 'Bu işlem için yetkiniz yok',
+      });
+    }
+
     res.status(201).json({
       status: 'success',
       movieseries,
@@ -23,7 +32,14 @@ exports.updateMovieSeries = async (req, res) => {
   try {
     const movieSeriesId = req.params.id;
     const updateMovieSeriesData = req.body;
+    const user = req.user.userId;
 
+    if (user.role !== 'admin') {
+      return res.status(400).json({
+        status: 'fail',
+        error: 'Bu işlem için yetkiniz yok',
+      });
+    }
     const movieseries = await movieSeries.findByIdAndUpdate(
       movieSeriesId,
       updateMovieSeriesData,
