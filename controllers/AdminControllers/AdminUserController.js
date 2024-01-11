@@ -35,7 +35,7 @@ exports.refreshToken = async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: 'fail',
-      error:error.message,
+      error: error.message,
     });
   }
 };
@@ -53,20 +53,20 @@ exports.loginAdmin = async (req, res) => {
       });
     }
 
-    if(user.role == 'banned'){
+    if (user.role == 'banned') {
       return res.status(400).json({
         status: 'fail',
         error: 'Kullanıcı yasaklandı.',
       });
     }
 
-    if(user.role !== 'admin'){
+    if (user.role !== 'admin') {
       return res.status(400).json({
         status: 'fail',
         error: 'Bu işlem için yetkiniz yok',
       });
     }
-    
+
     const same = await bcrypt.compare(password, user.password);
 
     if (!same) {
@@ -77,7 +77,7 @@ exports.loginAdmin = async (req, res) => {
     }
 
     const accessToken = jwt.sign(
-      { userId: user._id, email: user.email },
+      { userId: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
@@ -102,7 +102,7 @@ exports.loginAdmin = async (req, res) => {
   } catch (error) {
     res.status(400).json({
       status: 'fail',
-      error:error.message,
+      error: error.message,
     });
   }
 };
@@ -111,23 +111,25 @@ exports.loginAdmin = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const userId = req.params.id; // Kullanıcı Id'si alındı
-
     // Kullanıcıyı veritabanından bulun
     const user = await User.findById(userId);
-    const users = req.user.userId;//JWT'den geldi
+    const users = await User.find({ role: 'admin' });
 
+    for (const user of users) {
+      //user adlı değişken, users dizisinin bir elemanını temsil eder.
+
+      if (user.role !== 'admin') {
+        return res.status(400).json({
+          status: 'fail',
+          error: 'Bu işlem için yetkiniz yok',
+        });
+      }
+    }
     // Kullanıcı mevcut değilse hata döndürün
     if (!user) {
       return res.status(404).json({
         status: 'fail',
         message: 'Kullanıcı bulunamadı.',
-      });
-    }
-
-    if (users.role !== 'admin') {
-      return res.status(400).json({
-        status: 'fail',
-        error: 'Bu işlem için yetkiniz yok',
       });
     }
 
@@ -151,19 +153,23 @@ exports.deleteUser = async (req, res) => {
 exports.bannedUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
-    const users = req.user.userId; //JWT'den geldi
+    const users = await User.find({ role: 'admin' });
+
+    for (const user of users) {
+      //user adlı değişken, users dizisinin bir elemanını temsil eder.
+
+      if (user.role !== 'admin') {
+        return res.status(400).json({
+          status: 'fail',
+          error: 'Bu işlem için yetkiniz yok',
+        });
+      }
+    }
 
     if (!user) {
       return res.status(400).json({
         status: 'fail',
         message: 'Kullanıcı bulunamadı.',
-      });
-    }
-
-    if (users.role !== 'admin') {
-      return res.status(400).json({
-        status: 'fail',
-        error: 'Bu işlem için yetkiniz yok',
       });
     }
 

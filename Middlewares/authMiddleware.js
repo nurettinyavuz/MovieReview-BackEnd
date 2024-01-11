@@ -20,6 +20,13 @@ exports.authenticateToken = async (req, res, next) => {
           error,
         });
       }
+
+      if (user.role !== 'user') {
+        return res.status(403).json({
+          message: 'Yetkiniz yok',
+        });
+      }
+
       req.user = user;
       next();
     });
@@ -35,21 +42,14 @@ exports.authenticateToken = async (req, res, next) => {
 exports.checkAdminAuthorization = async (req, res, next) => {
   try {
     const token = req.headers['authorization']?.split(' ')[1];
-    const users = req.user.userId;
 
-    if (users.role !== 'admin') {
-      return res.status(400).json({
-        status: 'fail',
-        error: 'Bu işlem için yetkiniz yok',
-      });
-    }
     if (!token) {
       return res.status(401).json({
         message: 'Giriş yapılamadı',
       });
     }
 
-    jwt.verify(token, process.env.JWT_SECRET, async (error, user) => {
+    jwt.verify(token, process.env.JWT_SECRET, (error, user) => {
       if (error) {
         console.log(error);
         return res.status(400).json({
@@ -57,14 +57,22 @@ exports.checkAdminAuthorization = async (req, res, next) => {
           error,
         });
       }
-      
+
+      console.log(user.role);
+      // Burada admin kontrolü yapılır
+      if (user.role !== 'admin') {
+        return res.status(403).json({
+          message: 'Yetkiniz yok',
+        });
+      }
+
       req.user = user;
       next();
     });
   } catch (error) {
     res.status(400).json({
       status: 'fail',
-      error,
+      error:error.message,
     });
   }
 };
