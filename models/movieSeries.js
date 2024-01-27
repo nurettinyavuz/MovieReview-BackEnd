@@ -38,7 +38,11 @@ const movieSeriesSchema = new Schema({
   comments: [{
     type: Schema.Types.ObjectId,
     ref: 'Comment',
-  }]
+  }],
+  moviePhoto: {
+    type: String,
+    required: true,
+  },
 });
 
 const movieSeries = mongoose.model('MovieSeries', movieSeriesSchema);
