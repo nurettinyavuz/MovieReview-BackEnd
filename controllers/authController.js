@@ -110,20 +110,20 @@ exports.loginUser = async (req, res) => {
       });
     }
 
-    if(user.role == 'banned'){
+    if (user.role == 'banned') {
       return res.status(400).json({
         status: 'fail',
         error: 'Kullanıcı yasaklandı.',
       });
     }
 
-    if(user.role == 'admin'){
+    if (user.role == 'admin') {
       return res.status(400).json({
         status: 'fail',
         error: 'Admin girişi yapamazsınız.',
       });
     }
-    
+
     const same = await bcrypt.compare(password, user.password);
 
     if (!same) {
@@ -210,14 +210,8 @@ exports.getUser = async (req, res) => {
 // All User
 exports.getAllUsers = async (req, res) => {
   try {
-    // Sayfa numarasını URL'den alır eğer sayfa isteği gelmezse 1 dönderir(page) ve sayfa başına kullanıcı sayısını al(perPage)
-    const page = parseInt(req.query.page) || 1;
-    const perPage = 15;
-
     // Kullanıcıları belirli sayfaya göre getir
-    const allUsers = await User.find()
-      .skip((page - 1) * perPage) // Belirli sayfaya göre kullanıcıları atlar(3. sayfadakileri gösterin derse,ilk 2 sayfada kullanılan kullanıcıları atlar,o yüzden -1 yazdık)
-      .limit(perPage);
+    const allUsers = await User.find();
 
     //hiç kullanıcı bulunamazsa veya kullanıcı listesi boşsa
     if (!allUsers || allUsers.length === 0) {
@@ -230,8 +224,6 @@ exports.getAllUsers = async (req, res) => {
     res.status(200).json({
       success: true,
       allUsers,
-      currentPage: page,
-      totalPages: Math.ceil(allUsers.length / perPage), // ceil methodu yukarı yuvarlar
     });
   } catch (error) {
     res.status(500).json({
