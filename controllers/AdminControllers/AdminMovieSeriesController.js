@@ -71,6 +71,39 @@ exports.updateMovieSeries = async (req, res) => {
   }
 };
 
+exports.deleteMovieSeries = async (req, res) => {
+  try {
+    const movieSeriesId = req.params.id;
+    const users = await User.find({ role: 'admin'});
+
+    for (const user of users) {//user adlı değişken, users dizisinin bir elemanını temsil eder.
+    
+        if (user.role !== 'admin') {
+          return res.status(400).json({
+            status: 'fail',
+            error: 'Bu işlem için yetkiniz yok',
+          });
+        }
+      }
+    const movieseries = await movieSeries.findByIdAndDelete(movieSeriesId);
+    if (!movieseries) {
+      res.status(400).json({
+        status: 'fail',
+        error: 'No movieSeries found',
+      });
+    }
+    res.status(201).json({
+      status: 'success',
+      movieseries,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+}
+
 exports.getAllMovies = async (req, res) => {
   try {
     const movies = await movieSeries.find({ MovieOrSeries: 'Film' });
