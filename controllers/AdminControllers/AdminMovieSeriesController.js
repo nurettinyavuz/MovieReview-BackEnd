@@ -104,6 +104,42 @@ exports.deleteMovieSeries = async (req, res) => {
   }
 }
 
+exports.bulkDeleteMovieSeries = async (req, res) => {
+  try {
+    const { movieSeriesIds } = req.body;
+    const users = await User.find({ role: 'admin'});
+
+    for (const user of users) {//user adlı değişken, users dizisinin bir elemanını temsil eder. 
+        if (user.role !== 'admin') {
+          return res.status(400).json({
+            status: 'fail',
+            error: 'Bu işlem için yetkiniz yok',
+          });
+        }
+      }
+
+    const deletedMovieSeries = await movieSeries.deleteMany({ _id: { $in: movieSeriesIds } });
+
+    if (deletedMovieSeries.deletedCount === 0) {
+      return res.status(404).json({
+        status: 'fail',
+        error: 'Hiç film serisi bulunamadı',
+      });
+    }
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Film serileri başarıyla silindi',
+      deletedMovieSeriesCount: deletedMovieSeries.deletedCount,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
 exports.getAllMovies = async (req, res) => {
   try {
     const movies = await movieSeries.find({ MovieOrSeries: 'Film' });
