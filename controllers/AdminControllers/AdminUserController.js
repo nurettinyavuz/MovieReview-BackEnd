@@ -200,7 +200,6 @@ exports.bulkDeleteUsers = async (req, res) => {
   }
 };
 
-
 //Banned Useer
 exports.bannedUser = async (req, res) => {
   try {

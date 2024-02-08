@@ -28,11 +28,7 @@ const UserSchema = new Schema({
     enum: ['user','banned', 'admin'],
     default: 'user', //otomatik user olarak giriş yapıyor
   },
-  userScore: {
-    type: Number,
-    default: 0, // Başlangıç puanı, isteğe bağlı olarak 0 veya başka bir değer olabilir.
-  },
-
+ 
   //"comments" kullanıcının yaptığı yorumları tutar
   comments: [
     {
