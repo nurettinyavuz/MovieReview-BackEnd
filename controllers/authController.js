@@ -226,7 +226,7 @@ exports.getAllUsers = async (req, res) => {
       allUsers,
     });
   } catch (error) {
-    res.status(500).json({
+    res.status(400).json({
       status: 'error',
       error: error.message,
     });
@@ -235,20 +235,30 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getFavoriteMovieSeries = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user.userId; // JWT'den çıkartılan user id
 
-    if (!userId) {
+    const user = await User.findById(userId);
+
+    if (!user) {
       return res.status(400).json({
         status: 'fail',
-        error: 'User not authenticated',
+        error: 'User not found',
       });
     }
 
+    // Kullanıcının favori film dizilerini getir
+    const favoriteMovieSeries = await movieSeries.find({ _id: { $in: user.favoriteMovieSeries } });
 
+    res.status(200).json({
+      status: 'success',
+      favoriteMovieSeries,
+    });
   } catch (error) {
-    res.status(500).json({
-      status: 'error',
+    res.status(400).json({
+      status: 'fail',
       error: error.message,
     });
   }
 };
+
+
