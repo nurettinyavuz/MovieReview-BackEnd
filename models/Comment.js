@@ -41,6 +41,10 @@ const commentSchema = new Schema({
     type: Array,
     default: [],
   },
+  moviePhoto: {
+    type: String,
+    required: true,
+  },
 });
 
 

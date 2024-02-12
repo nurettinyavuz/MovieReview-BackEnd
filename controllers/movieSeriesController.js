@@ -4,7 +4,6 @@ const User = require('../models/User');
 const movieSeries = require('../models/movieSeries');
 const Comment = require('../models/Comment');
 
-
 //TEKİL Film
 exports.getMovieSeries = async (req, res) => {
   try {
@@ -24,7 +23,7 @@ exports.getMovieSeries = async (req, res) => {
 exports.getAllMovieSeries = async (req, res) => {
   try {
     // Kullanıcıları belirli sayfaya göre getir
-    const allmovieseries = await movieSeries.find()
+    const allmovieseries = await movieSeries.find();
 
     res.status(200).json({
       success: true,
@@ -41,7 +40,7 @@ exports.getAllMovieSeries = async (req, res) => {
 //Güncel Filmler
 exports.CurrentMovies = async (req, res) => {
   try {
-    const movieseries = await movieSeries.find({})
+    const movieseries = await movieSeries.find({});
 
     res.status(200).json({
       success: true,
@@ -84,6 +83,48 @@ exports.getSearchMovieSeries = async (req, res) => {
     res.status(200).json({
       success: true,
       moviesSeries,
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: 'fail',
+      error: error.message,
+    });
+  }
+};
+
+exports.favoriteMovieSeries = async (req, res) => {
+  try {
+    const movieSeriesId = req.params.id;
+    const movieseries = await movieSeries.findOne({ _id: movieSeriesId });
+    
+    const userId = req.user.userId; // JWT'den çıkartılan user id
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).json({
+        status: 'fail',
+        error: 'User not found',
+      });
+    }
+
+    //kullanıcının favori film listesinde filmin id'sini arar
+    const userIndex = user.favoriteMovieSeries.indexOf(movieSeriesId);
+
+    //Eğer favori dizisinde ekli değilse -1 gönderir, eğer -1 ise if'in içine
+    if (userIndex === -1) {
+      // Film favori listesinde değilse, favorilere ekle
+      user.favoriteMovieSeries.push(movieSeriesId);
+    } else {
+      // Film favori listesindeyse, favorilerden çıkar
+      user.favoriteMovieSeries.splice(userIndex, 1);
+    }
+
+    await user.save();
+
+    res.status(201).json({
+      status: 'success',
+      user,
     });
   } catch (error) {
     res.status(400).json({

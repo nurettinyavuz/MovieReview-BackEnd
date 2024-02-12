@@ -25,10 +25,10 @@ const UserSchema = new Schema({
   },
   role: {
     type: String,
-    enum: ['user','banned', 'admin'],
+    enum: ['user', 'banned', 'admin'],
     default: 'user', //otomatik user olarak giriş yapıyor
   },
- 
+
   //"comments" kullanıcının yaptığı yorumları tutar
   comments: [
     {
@@ -57,6 +57,12 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  favoriteMovieSeries: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: 'Movie',
+    },
+  ],
 });
 
 UserSchema.pre('save', function (next) {
