@@ -232,3 +232,23 @@ exports.getAllUsers = async (req, res) => {
     });
   }
 };
+
+exports.getFavoriteMovieSeries = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    if (!userId) {
+      return res.status(400).json({
+        status: 'fail',
+        error: 'User not authenticated',
+      });
+    }
+
+
+  } catch (error) {
+    res.status(500).json({
+      status: 'error',
+      error: error.message,
+    });
+  }
+};

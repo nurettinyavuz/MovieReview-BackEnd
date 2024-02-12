@@ -95,7 +95,6 @@ exports.getSearchMovieSeries = async (req, res) => {
 exports.favoriteMovieSeries = async (req, res) => {
   try {
     const movieSeriesId = req.params.id;
-    const movieseries = await movieSeries.findOne({ _id: movieSeriesId });
     
     const userId = req.user.userId; // JWT'den çıkartılan user id
 
@@ -108,10 +107,20 @@ exports.favoriteMovieSeries = async (req, res) => {
       });
     }
 
-    //kullanıcının favori film listesinde filmin id'sini arar
+    // Veritabanında belirtilen film dizisi ID'sini kontrol et
+    const movieSeriesExists = await movieSeries.findById(movieSeriesId);
+
+    if (!movieSeriesExists) {
+      return res.status(404).json({
+        status: 'fail',
+        error: 'Movie series not found in the database',
+      });
+    }
+
+    // Kullanıcının favori film listesinde filmin id'sini arar
     const userIndex = user.favoriteMovieSeries.indexOf(movieSeriesId);
 
-    //Eğer favori dizisinde ekli değilse -1 gönderir, eğer -1 ise if'in içine
+    // Eğer favori dizisinde ekli değilse -1 gönderir, eğer -1 ise if'in içine
     if (userIndex === -1) {
       // Film favori listesinde değilse, favorilere ekle
       user.favoriteMovieSeries.push(movieSeriesId);
@@ -133,3 +142,5 @@ exports.favoriteMovieSeries = async (req, res) => {
     });
   }
 };
+
+
