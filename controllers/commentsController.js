@@ -35,7 +35,7 @@ const calculateAverageRating = async (id) => {
   }
 };
 
-exports.CreateComment = async (req, res ) => {
+exports.CreateComment = async (req, res) => {
   try {
     // Kullanıcının kimliğini authorizationToken'dan alın
     const userId = req.user.userId;
@@ -67,26 +67,26 @@ exports.CreateComment = async (req, res ) => {
     }
 
     const movieSeriesName = movieseries.name;
-
+    const moviePhoto = movieseries.moviePhoto; // Film serisinin fotoğraf stringini alın
     const { comment, rating } = req.body;
 
     // Kullanıcıdan gelen yıldız değerini kontrol etmek
     if (rating < 1 || rating > 5) {
       return res.status(400).json({
         status: 'fail',
-        error: 'YÄ±ldÄ±z deÄŸeri 1 ile 5 arasÄ±nda olmalÄ±dÄ±r.',
+        error: 'Yıldız değeri 1 ile 5 arasında olmalıdır.',
       });
     }
 
     const createComment = await Comment.create({
       comment: comment,
-      createdUserId: userId, // Yorumun kimin tarafından yapıldığını belirtin
-      userName: userName, // Yorumu yapan kullanıcının adını ekleyin
+      createdUserId: userId,
+      userName: userName,
       movieSeriesId: movieSeriesId,
       movieSeriesName: movieSeriesName,
       rating: rating,
+      moviePhoto: moviePhoto, // Yorum modeline film serisi fotoğrafını ekleyin
     });
-
 
     // Mevcut yorumları alıp yeni yorumun ObjectId'sini eklemek
     if (Array.isArray(movieseries.comments)) {
@@ -106,20 +106,18 @@ exports.CreateComment = async (req, res ) => {
 
     await calculateAverageRating(movieSeriesId);
 
-   if(calculateAverageRating(movieSeriesId)){
-        res.status(201).json({
+    if (calculateAverageRating(movieSeriesId)) {
+      res.status(201).json({
         success: true,
-        message: 'Comment added successfully.',
+        message: 'Yorum başarıyla eklendi.',
         createComment,
       });
-   }else{
+    } else {
       return res.status(400).json({
-          success: false,
-          message: 'Comment could not be added.',
-        });
-   }
-
-
+        success: false,
+        message: 'Yorum eklenemedi.',
+      });
+    }
   } catch (error) {
     res.status(400).json({
       status: 'fail',
@@ -127,6 +125,7 @@ exports.CreateComment = async (req, res ) => {
     });
   }
 };
+
 
 // Delete Comment
 exports.deleteComment = async (req, res) => {

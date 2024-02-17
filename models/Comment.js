@@ -43,7 +43,6 @@ const commentSchema = new Schema({
   },
   moviePhoto: {
     type: String,
-    required: true,
   },
 });
 

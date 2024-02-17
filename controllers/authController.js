@@ -235,7 +235,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getFavoriteMovieSeries = async (req, res) => {
   try {
-    const userId = req.user.userId; // JWT'den çıkartılan user id
+    const userId = req.params.id; // URL'den gelen user id
 
     const user = await User.findById(userId);
 

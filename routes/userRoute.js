@@ -10,6 +10,6 @@ router.route('/register').post(authController.createUser);//http://localhost:500
 router.route('/login').post(authController.loginUser,authMiddleware.authenticateToken);//http://localhost:5000/users/login
 router.route('/refreshToken').post(authController.refreshToken);//http://localhost:5000/users/refreshToken
 router.route('/logout').post(authMiddleware.authenticateToken, authController.logoutUser);//http://localhost:5000/users/logout
-router.route('/fav/favoritesMovieSeries').get(authMiddleware.authenticateToken,authController.getFavoriteMovieSeries);//http://localhost:5000/users/favoritesMovieSeries
+router.route('/:id/favoritesMovieSeries').get(authMiddleware.authenticateToken,authController.getFavoriteMovieSeries);//http://localhost:5000/users/:id/favoritesMovieSeries
 
 module.exports = router;
