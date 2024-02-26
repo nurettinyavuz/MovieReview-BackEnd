@@ -152,11 +152,19 @@ exports.deleteUser = async (req, res) => {
 exports.bulkDeleteUsers = async (req, res) => {
   try {
     const { userIds } = req.body;
+    const user = req.user; 
 
     if (!userIds || userIds.length === 0) {
       return res.status(400).json({
         status: 'fail',
         error: 'Geçersiz kullanıcı kimliği dizisi.',
+      });
+    }
+
+    if (user.role === 'admin') {
+      return res.status(400).json({
+        status: 'fail',
+        error: 'Adminleri silmeye yetkiniz yok',
       });
     }
 
@@ -176,7 +184,6 @@ exports.bulkDeleteUsers = async (req, res) => {
       });
     }
 
-    // Diğer durumlar için devam eden kod
     const deletedUsers = await User.deleteMany({ _id: { $in: userIds } });
 
     if (deletedUsers.deletedCount === 0) {
@@ -223,7 +230,12 @@ exports.bannedUser = async (req, res) => {
         message: 'Kullanıcı bulunamadı.',
       });
     }
-
+    if (user.role === 'admin') {
+      return res.status(400).json({
+        status: 'fail',
+        error: 'Adminleri banlayamazsınız',
+      });
+    }
     if (user.isBanned === false) {
       user.role = 'banned';
       user.isBanned = true;
