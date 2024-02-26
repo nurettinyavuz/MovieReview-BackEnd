@@ -241,7 +241,7 @@ exports.getFavoriteMovieSeries = async (req, res) => {
 
     if (!user) {
       return res.status(400).json({
-        status: 'fail',
+        success: 'fail',
         error: 'User not found',
       });
     }
@@ -250,12 +250,12 @@ exports.getFavoriteMovieSeries = async (req, res) => {
     const favoriteMovieSeries = await movieSeries.find({ _id: { $in: user.favoriteMovieSeries } });
 
     res.status(200).json({
-      status: 'success',
+      success: true,
       favoriteMovieSeries,
     });
   } catch (error) {
     res.status(400).json({
-      status: 'fail',
+      success: 'fail',
       error: error.message,
     });
   }
