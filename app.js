@@ -53,6 +53,10 @@ mongoose
       userIN = req.session.userID;
       next(); //next yazmamızın nedeni diğer middleware'a gitmesi için
     });
+    app.get('/', (req, res) => {
+      res.send('Welcome to Movie Series API');
+    });
+
     app.use('/users', userRoute);
     app.use('/movieSeries', movieSeriesRoute);
     app.use('/comments', commentsRoute);
@@ -61,7 +65,7 @@ mongoose
     app.use('/AdminMovieseries',AdminMovieSeriesRoute);
     app.use('/AdminComments',AdminCommentsRoute);
 
-    const port = 5000;
+    const port = 2020;
     app.listen(port, () => {
       console.log(`App startted on port ${port}`);
     });
@@ -70,3 +74,18 @@ mongoose
     console.log('DB Connection Error: ', error);
   });
 
+
+  const https = require('https');
+  const sites = [
+    'https://moviereview-backend-tnmp.onrender.com/',
+    'https://mts-frontend.onrender.com/'
+  ];
+  setInterval(() => {
+    sites.forEach(site => {
+      https.get(site, (res) => {
+        console.log(`Pinged ${site}: Status ${res.statusCode}`);
+      }).on('error', (e) => {
+        console.error(`Ping error for ${site}:`, e.message);
+      });
+    });
+  }, 60000); 
